@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="balefire">
+<head>  
+  <base href="/balefire/">  
+  <meta name="viewport" content="width=device-width, user-scalable=no">  
+  <title>Sandbox</title> 
+  <link rel="import" href="custom_elements/d-calendar/d-calendar.html">
+  <style>
+    body {
+      -webkit-font-smoothing: antialiased; background: #DDD;
+      -webkit-tap-highlight-color: rgba(0,0,0,0);
+      -webkit-touch-callout: none;
+      background: #CFD8DC;
+    }
+    d-calendar {
+      margin: 24px 12px;
+      box-shadow: 0px 3px 5px rgba(0,0,0,0.2);
+    }
+    .swatch-bar {
+      position: fixed;
+      top: 50%;
+      left: 0;
+      -webkit-transform: translateY(-50%);
+      -transform: translateY(-50%);
+    }
+    .swatch {
+      width: 36px;
+      height: 36px;
+      cursor: pointer; 
+      border-radius: 50%;
+      margin: 12px;
+      box-shadow: 0px 1px 3px rgba(0,0,0,0.2);
+    }
+  </style>
+</head>
+
+<body unresolved fullbleed layout vertical center-justified center> 
+
+  <template id="sandbox" is="auto-binding">
+    
+    <div layout horizontal>
+      <d-calendar class="light-theme"></d-calendar>
+      <d-calendar></d-calendar>
+    </div>
+
+    <div class="swatch-bar">
+      <template repeat="{{color in colors}}">
+        <div class="swatch" on-tap="{{selectColor}}" color="{{color}}" style="background-color: {{color}}"></div>
+      </template>
+    </div>
+  
+  </template>
+
+  <script>
+    var sandbox = document.getElementById('sandbox');
+
+    sandbox.colors = [
+      '#f44336',
+      '#E91E63',
+      '#9C27B0',
+      '#673AB7',
+      '#3F51B5',
+      '#2196F3',
+      '#03A9F4',
+      '#00BCD4',
+      '#4CAF50',
+      '#CDDC39',
+      '#FFEB3B',
+      '#FFC107',
+      '#FF9800',
+      '#FF5722',
+      '#795548',
+      '#9E9E9E',
+      '#607D8B'
+    ];
+
+    sandbox.selectColor = function(ev, detail, sender){
+      var selectedColor = sender.getAttribute('color');
+      sandbox.selectedColor = selectedColor;
+      CoreStyle.g.dCalendar.accentColor = selectedColor;
+    }
+
+    sandbox.selectedColor = '#2196F3';
+  </script>
+ 
+</body> 
+</html>

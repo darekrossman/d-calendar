@@ -13,7 +13,7 @@
 <!--
 Element providing an interactive calendar and datepicker.
 
-##### Example
+Example
 
     <d-calendar selectedDate="4/4/16"></d-calendar>
 
@@ -101,13 +101,25 @@ Element providing an interactive calendar and datepicker.
 
     var prototype = {
 
+      /**
+       * The `selectedDate` attribute sets an initial selectedDate
+       *
+       * @attribute selectedDate
+       * @type string
+       * @default {current date}
+       */
+      selectedDate: null,
+
+      /**
+       * The `author` attribute sets an initial author
+       *
+       * @attribute author
+       * @type string
+       * @default 'Dimitri Glazkov'
+       */
       selectedView: 'dateView',
 
       ready: function() {
-
-        CoreStyle.g.transitions.duration = '400ms'
-
-    
 
         this.dateUtils = this.$.dateUtils;
 
@@ -135,6 +147,13 @@ Element providing an interactive calendar and datepicker.
         this.async(this.updateViewingDateProps)
       },
 
+      /**
+       * The `updateSelectedDateProps` is none of your business.
+       *
+       * @method updateSelectedDateProps
+       * @param {String} greeting Pass in a specific greeting.
+       * @return {String} Returns a string greeting.
+       */
       updateSelectedDateProps: function() {
         this.selectedWeekday = this.dateUtils.getDayOfWeek(this.selectedDate);
         this.selectedMonth = this.dateUtils.getShortMonth(this.selectedDate);

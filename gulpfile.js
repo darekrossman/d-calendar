@@ -3,10 +3,10 @@ var gulp = require('gulp'),
 
 gulp.task('browser-sync', function() {
   browserSync({
-    server: {baseDir: './'}
+    server: {baseDir: './'},
+    open: false,
+    files: ['*.js', '*.html', '*.css']
   });
-});
+}); 
 
-gulp.task('default', ['browser-sync'], function(){
-  gulp.watch(['*.js', '*.html', '*.css'])
-})
+gulp.task('default', ['browser-sync'])

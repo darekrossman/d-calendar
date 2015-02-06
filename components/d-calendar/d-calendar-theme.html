@@ -1,0 +1,335 @@
+<link rel="import" href="../font-roboto/roboto.html"/>
+<link rel="import" href="../core-style/core-style.html"/>
+
+<core-style id="d-calendar-theme">
+  :host { 
+    user-select: none;
+    -webkit-user-select: none;
+    font-family: RobotoDraft;
+    font-size: 12px;
+    line-height: 24px;
+    background: {{g.dCalendar.bgColor}};
+    color: #FFF;
+  } 
+  :host(.light-theme) {
+    background: #FFF; 
+    color: #111;
+  } 
+  :host * {
+   cursor: default;
+  }
+
+
+  #selectedWeekdayHeader {
+    color: #FFF;
+    height: 36px;
+    background: {{g.dCalendar.accentColor}};
+    overflow: hidden;
+    -webkit-transition: all .3s;
+    transition: all .3s;
+  }
+
+  .selectedWeekday {
+    font-size: 14px;
+    line-height: 36px;
+    text-align: center;
+    margin: 0;
+    font-weight: 400;
+  }
+
+  #selectedDateHeader {
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.05);
+    color: #FFF;
+    padding: 12px 0;
+    -webkit-transition: all .3s;
+    transition: all .3s;
+  }
+  :host(.light-theme) #selectedDateHeader {
+    background: {{scaleColor(g.dCalendar.accentColor, 10)}};
+  }
+  #wrapper[horizontal] #selectedDateHeader {
+    height: 264px;
+  }
+
+  #selectedDateHeader > div {
+    width: 100%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .selectedWeekday {
+    font-size: 14px;
+    line-height: 36px;
+    text-align: center;
+    margin: 0;
+    font-weight: 400;
+  }
+
+  #selectedMonth,
+  #selectedYear {
+    height: 30px;
+  }
+  #selectedDay {
+    height: 60px;
+  }
+  .selectedMonth,
+  .selectedYear {
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 30px;
+    letter-spacing: 0.05em;
+  }
+  .selectedDay {
+    font-size: 60px;
+    line-height: 60px;
+  }
+  .selectedYear {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  
+  #wrapper[horizontal] #selectedMonth,
+  #wrapper[horizontal] #selectedYear {
+    height: 50px;
+  }
+  #wrapper[horizontal] #selectedDay {
+    height: 90px;
+  }
+  #wrapper[horizontal] .selectedMonth,
+  #wrapper[horizontal] .selectedYear {
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 50px;
+    letter-spacing: 0.05em;
+  }
+  #wrapper[horizontal] .selectedDay {
+    font-size: 86px;
+    line-height: 90px;
+  }
+
+  #calendar {
+    
+  }
+
+  #header {
+    position: relative;
+    overflow: hidden;
+    padding: 0 9px;
+    margin-bottom: 0px;
+  } 
+  #header paper-icon-button {
+    margin: 4px 0;
+    transition: all .1s;
+  }
+  #header paper-icon-button:active {
+    color: {{g.dCalendar.accentColor}};
+  }
+
+  #viewingMonthYear {
+    overflow: hidden;
+  }
+  .viewingMonthYear {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 48px;
+    letter-spacing: 0.02em;
+    text-align: center;
+  }
+
+  .weekday-name {
+    font-weight: 500;
+    width: 36px;
+    text-align: center;
+    color: rgba(255,255,255,0.2);
+  }
+  :host(.light-theme) .weekday-name{
+    color: rgba(0,0,0,0.3);
+  }
+
+  #views {
+    height: 300px;
+    width: 276px;
+    overflow: hidden;
+  }
+  #calendar-selection {
+    width: 276px;
+  }
+
+  .weekday {
+    margin: 0 12px;
+  }
+
+  .slideup,
+  ::shadow .slideup {  
+    transition: all .4s cubic-bezier(0.390, 0.575, 0.135, 0.995); 
+    -webkit-transition: all .4s cubic-bezier(0.390, 0.575, 0.135, 0.995); 
+    position: absolute;
+    -webkit-transform: translateY(100%);
+    transform: translateY(100%);
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    opacity: 0;
+    z-index: 0;
+  }
+  .slideup.in,
+  ::shadow .slideup.in {
+    -webkit-transform: translateY(0px);
+    transform: translateY(0px);
+    z-index: 1;
+    opacity: 0.9;
+  }
+  .slideup.out,
+  ::shadow .slideup.out {
+    -webkit-transform: translateY(-100%);
+    transform: translateY(-100%);
+    z-index: 0;
+    opacity: 0;
+  }  
+
+  .slideleft,
+  ::shadow .slideleft {
+    transition: all .3s cubic-bezier(0.390, 0.575, 0.135, 0.995); 
+    -webkit-transition: all .3s cubic-bezier(0.390, 0.575, 0.135, 0.995); 
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+  }
+  .slideleft.in,
+  ::shadow .slideleft.in {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+  .slideleft.out,
+  ::shadow .slideleft.out {
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
+  }
+
+</core-style>
+
+<core-style id="d-calendar-theme-weeks">
+  #days {
+    position: relative;
+    overflow: hidden;
+    height: 216px;
+  }
+
+  .weeks {
+    padding: 0 12px;
+    box-sizing: border-box;
+  }
+
+  .day {
+    box-sizing: border-box;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    position: relative;
+  } 
+  .day.currentday {
+    font-weight: 500;
+    color: {{g.dCalendar.accentColor}};
+  }
+
+  .day:after {
+    content: '';
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    bottom: 3px;
+    left: 3px;
+    background: {{g.dCalendar.accentColor}};
+    z-index: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    opacity: 0;
+    transition: all .2s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+    -webkit-transition: all .2s cubic-bezier(0.175, 0.885, 0.320, 1.275);
+  }
+
+  .day[selected]:after {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .day div {
+    z-index: 1;
+    transition: all .2s;
+    -webkit-transition: all .2s;
+  }
+
+  .day[selected] div {
+    color: #FFF; 
+    font-weight: 600;
+  }
+</core-style>
+
+<core-style id="d-calendar-theme-years">
+  #years {
+    box-sizing: border-box;
+    height: 300px;
+    max-width: 100%;
+    padding: 6px;
+    overflow: auto; 
+  }
+  .year {
+    width: 33.3%;
+    text-align: center;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 36px;
+  }
+  .year paper-button {
+    display: block;
+    width: 100%;
+    margin: 0;
+  }
+  paper-button::shadow #ripple {
+    color: {{g.dCalendar.accentColor}};
+  }
+</core-style>
+
+<script>
+
+  (function(){
+    
+    CoreStyle.g.dCalendar = {
+      accentColor: '#2196F3',
+      bgColor: '#2c3a40' 
+    };
+
+    document._currentScript.ownerDocument.getElementById('d-calendar-theme').scaleColor = scaleColor;
+
+    function scaleColor(col, amt) {
+      var usePound = false;
+      if (col[0] == "#") {
+        col = col.slice(1);
+        usePound = true;
+      }
+      var num = parseInt(col,16);
+      var r = (num >> 16) + amt;
+      if (r > 255) r = 255;
+      else if  (r < 0) r = 0;
+      var b = ((num >> 8) & 0x00FF) + amt;
+      if (b > 255) b = 255;
+      else if  (b < 0) b = 0;
+      var g = (num & 0x0000FF) + amt;
+      if (g > 255) g = 255;
+      else if (g < 0) g = 0;
+      return (usePound?"#":"") + String("000000" + (g | (b << 8) | (r << 16)).toString(16)).slice(-6);
+    }
+    
+  })()
+
+</script>
+
+

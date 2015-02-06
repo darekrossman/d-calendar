@@ -1,0 +1,321 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../font-roboto/roboto.html"/>
+<link rel="import" href="../core-meta/core-meta.html"/>
+<link rel="import" href="../core-style/core-style.html"/>
+<link rel="import" href="../core-media-query/core-media-query.html"/>
+<link rel="import" href="../core-animated-pages/core-animated-pages.html"/>
+<link rel="import" href="../core-animated-pages/transitions/slide-up.html"/>
+<link rel="import" href="../paper-icon-button/paper-icon-button.html"/>
+<link rel="import" href="d-calendar-theme.html"/>
+<link rel="import" href="d-calendar-weeks.html"/>
+<link rel="import" href="d-calendar-years.html"/>
+<link rel="import" href="d-date-utils.html"/> 
+
+<!--
+Element providing an interactive calendar and datepicker.
+
+Example
+
+    <d-calendar selectedDate="4/4/16"></d-calendar>
+
+@element d-calendar
+@blurb Element providing an interactive calendar and datepicker.
+@status alpha
+@homepage https://github.com/subpopular/d-calendar
+-->
+
+
+<!--
+Fired when an item element is tapped.
+
+@event core-activate
+@param {Object} detail
+  @param {Object} detail.item the item element
+-->
+
+
+<polymer-element name="d-calendar" attributes="selectedDate viewingDate date" touch-action="auto">
+  <template id="template">
+
+    <core-style ref="d-calendar-theme"></core-style>
+
+    <core-media-query query="max-height: 360px" queryMatches="{{landscape}}"></core-media-query>
+
+    <d-date-utils id="dateUtils"></d-date-utils>
+
+    <div id="wrapper" layout horizontal?="{{landscape}}" vertical?="{{!landscape}}">
+
+    <div id="calendar-selection">
+      <div id="selectedWeekdayHeader" layout horizontal>
+        <div relative flex id="selectedWeekday">
+          <div class="selectedWeekday slideup animate">{{selectedWeekday}}</div> 
+        </div>
+      </div> 
+
+      <div id="selectedDateHeader" layout vertical center center-justified>
+        <div id="selectedMonth">
+          <div class="selectedMonth slideup animate" style="text-transform: uppercase">{{selectedMonth}}</div>
+        </div>
+        <div id="selectedDay">
+          <div class="selectedDay slideup animate" view="dateView" on-tap="{{viewSelectAction}}">{{selectedDay}}</div>
+        </div>
+        <div id="selectedYear">
+          <div class="selectedYear slideup animate" view="yearView" on-tap="{{viewSelectAction}}">{{selectedYear}}</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="calendar" layout vertical on-trackx="{{trackx}}" on-trackstart="{{trackstart}}" on-trackend="{{trackend}}">
+
+      <core-animated-pages id="views" selected="{{selectedView}}" transitions="slide-up hero-transition cross-fade-delayed cross-fade">
+        <section name="dateView">
+          
+          <div cross-fade>
+
+            <div id="header" layout horizontal>
+              <paper-icon-button icon="chevron-left" on-tap="{{prevAction}}" noink></paper-icon-button>
+              <div flex relative id="viewingMonthYear">
+                <h4 class="viewingMonthYear slideleft animate">{{viewingMonth}} <span view="yearView" on-tap="{{viewSelectAction}}" hero hero-id="poo">{{viewingYear}}</span></h4>
+              </div>
+              <paper-icon-button icon="chevron-right" on-tap="{{nextAction}}" noink></paper-icon-button>
+            </div>
+
+            <div class="weekday" layout horizontal center>
+              <template repeat="{{weekday in weekdays}}">
+                <div class="weekday-name">{{weekday}}</div>
+              </template>
+            </div>
+            <d-calendar-weeks
+              date="{{viewingDate}}" 
+              selectedDate="{{selectedDate}}" 
+              on-d-calendar-date-selected="{{dateSelectAction}}">
+            </d-calendar-weeks>
+          </div>
+         
+        </section>
+
+        <section name="yearView">
+          <div cross-fade>
+            <d-calendar-years
+              on-d-calendar-year-selected="{{yearSelectAction}}"
+              viewingYear="{{viewingYear}}">
+            </d-calendar-years>
+          </div>
+        </section>
+          
+      </core-animated-pages>
+    </div>
+
+
+    </div>
+    
+  </template>
+
+  <script>
+  (function(){
+
+    var prototype = {
+
+      /**
+       * The `selectedDate` attribute sets an initial selectedDate
+       *
+       * @attribute selectedDate
+       * @type string
+       * @default {current date} 
+       */
+      selectedDate: null,
+
+      /**
+       * The `selectedView` attribute gets/sets the calendar view
+       * to one of `dateView` or `yearView`.
+       *
+       * @attribute selectedView
+       * @type string
+       * @default 'dateView'
+       */
+      selectedView: 'dateView',
+
+      ready: function() {
+
+        this.dateUtils = this.$.dateUtils;
+
+        if (!this.selectedDate)
+          this.selectedDate = new Date();
+        else
+          this.selectedDate = new Date(this.selectedDate);
+        
+        this.weekdays = ['S','M','T','W','T','F','S'];
+        this.viewingDate = this.viewingDate || new Date(this.selectedDate)
+        this.viewingDate.setDate(1);
+        this.nowDate = new Date();
+      
+        this.addEventListener('keyup', this.keyup.bind(this))
+      },
+
+      selectedDateChanged: function(olddate, newdate) {
+        
+        if (olddate && !olddate.getTime) olddate = new Date(olddate);
+
+        if (newdate && !newdate.getTime) {
+          newdate = new Date(newdate)
+          if (!newdate.getTime) return
+          this.selectedDate = newdate;
+        }
+
+        this.reverseAnimation = olddate && olddate.getTime() > newdate.getTime();
+        this.async(this.updateSelectedDateProps);
+        this.date = this.selectedDate;
+
+        this.focus();
+        this.fire('d-calendar-date-selected', {date: this.selectedDate})
+      },
+
+      viewingDateChanged: function(olddate, newdate) {
+        this.reverseAnimation = olddate && olddate.getTime() > newdate.getTime();
+        this.async(this.updateViewingDateProps)
+      },
+
+      dateChanged: function(olddate, newdate) {
+        
+      },
+
+      /**
+       * The `updateSelectedDateProps` is none of your business.
+       *
+       * @method updateSelectedDateProps
+       * @param {String} greeting Pass in a specific greeting.
+       * @return {String} Returns a string greeting.
+       */
+      updateSelectedDateProps: function() {
+        this.selectedWeekday = this.dateUtils.getDayOfWeek(this.selectedDate);
+        this.selectedMonth = this.dateUtils.getShortMonth(this.selectedDate);
+        this.selectedDay = this.selectedDate.getDate();
+        this.selectedYear = this.selectedDate.getFullYear();
+      },
+
+      updateViewingDateProps: function() {
+        this.viewingMonth = this.dateUtils.getFullMonth(this.viewingDate);
+        this.viewingYear = this.viewingDate.getFullYear();
+        this.viewingMonthYear = this.viewingMonth + ' ' + this.viewingYear;
+      },
+
+      nextAction: function() {
+        this.viewingDate = this.dateUtils.addMonths(this.viewingDate, 1);
+      },
+
+      prevAction: function() {      
+        this.viewingDate = this.dateUtils.addMonths(this.viewingDate, -1);
+      },
+
+      viewSelectAction: function(ev, detail, sender) {
+        this.selectedView = (sender.getAttribute('view')); 
+      },
+
+      dateSelectAction: function(ev, detail, sender) {
+        this.selectedDate = new Date(ev.detail.date);
+      },
+
+      yearSelectAction: function(ev, detail, sender) {
+        var year = ev.detail.year;
+        
+        this.disablePropertyAnimations = true;
+        this.viewingDate = new Date(year, this.viewingDate.getMonth(), 1);
+        this.async(function(){
+          this.$.views.selected = 'dateView';  
+          this.disablePropertyAnimations = false; 
+        }, null, 280);
+      },
+
+      renderNode: function(element) {
+        if (this.disablePropertyAnimations) return;
+        var self = this;
+        var delayRemovalTime = 400;
+        var el = element;
+        var elClone = el.cloneNode(true);
+    
+        el._originalTransition = element.style.transition;
+        el.style.transition = 'none';
+        el.parentElement.appendChild(elClone);
+
+        if (!this.reverseAnimation) {
+          el.classList.remove('in') // back to start position immediately
+        } else {
+          el.classList.add('out') // go to end position immediately
+        }
+
+        this.async(function(){
+          el.style.transition = el._originalTransition;
+          if (!this.reverseAnimation) {
+            elClone.classList.add('out'); // animate to end position 
+          } else {
+            elClone.classList.remove('in'); // animate to start position
+            el.classList.remove('out'); // animate to start position
+          } 
+          el.classList.add('in');
+        });
+
+        this.async(function(){
+          try {
+            el.parentNode.removeChild(elClone);
+          } catch (err) {
+          }
+        }, null, delayRemovalTime);
+      },
+
+      keyup: function(e){
+        var month = this.selectedDate.getMonth();
+        switch (e.keyCode) {
+          case 37:
+            this.prevAction()
+            break;
+          case 39:
+            this.nextAction()
+            break;
+        }
+      },
+      isXSwipe: function(start, end) {
+        var totalTouchTime = end.timeStamp - start.timeStamp;
+        var dx = end.dx;
+        return totalTouchTime < 500 && Math.abs(dx) > 40
+      },
+      trackx: function(e) {
+
+      },
+      trackstart: function(e) {
+        this.trackStartEvent = e;
+      },
+      trackend: function(e) {
+        if (this.isXSwipe(this.trackStartEvent, e)) {
+          e.dx < 0 ? this.nextAction() : this.prevAction();
+        }
+      }
+
+    };
+
+    // Set up the values we want to watch and assign the change callback,
+    // so that we can animate the nodes bound to them.
+    var fields = [
+      'selectedWeekday',
+      'selectedDay',
+      'selectedMonth',
+      'selectedYear',
+      'viewingMonthYear'
+    ]
+    fields.forEach(function(field){
+      prototype[field + 'Changed'] = function(oldval, newval) {
+        var el = this.shadowRoot.querySelector('.' + field);
+
+
+        if (el) this.renderNode(el);
+      }
+    })
+
+    Polymer('d-calendar', prototype);
+    
+  })()
+  </script>
+</polymer-element>
+
+
+
+

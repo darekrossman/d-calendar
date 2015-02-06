@@ -1,0 +1,120 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="d-date-utils.html"/>
+<link rel="import" href="d-calendar-theme.html"/>
+
+<!--
+Element for displaying the grid of days in each month.
+
+@element d-calendar-week
+@blurb Element for displaying the grid of days in each month.
+@status alpha
+@homepage https://github.com/subpopular/d-calendar-week
+-->
+
+<!--
+Fired when selecting a specific day of the month.
+
+@event d-calendar-date-selected
+@param {Object} detail
+  @param {string} detail.date the selected date
+-->
+
+<polymer-element name="d-calendar-weeks" attributes="date selectedDate">
+  <template>
+    <core-style ref="d-calendar-theme-weeks"></core-style>
+    <d-date-utils id="dateUtils"></d-date-utils>
+
+    <div id="days">
+      <div class="weeks slideleft">
+
+        <div layout horizontal wrap>
+          <template repeat="{{week, w in weeks}}">
+            
+            <template repeat="{{day, d in week}}">
+              <div layout horizontal center-justified
+                  class="day {{isSameDay(weeksFull[w][d], nowDate) ? 'currentday':''}} {{!isDayInMonth(weeksFull[w][d], date) ? 'offday':''}}"
+                  date="{{weeksFull[w][d]}}" 
+                  selected?="{{isSameDay(weeksFull[w][d], selectedDate)}}"
+                  on-tap="{{selectDay}}">
+                <div layout horizontal center>{{day}}</div>
+              </div>
+            </template>
+            
+          </template>
+        </div>
+
+      </div>
+    </div>
+     
+  </template>
+ 
+  <script>
+  (function(){
+
+    Polymer('d-calendar-weeks', {
+
+      ready: function() {
+        this.dateUtils = this.$.dateUtils;
+      },
+
+      created: function() {
+        this.nowDate = new Date();
+      },
+
+      domReady: function() {
+        this.updateWeeks();
+      }, 
+
+      datesEqual: function(d1, d2) {
+        if (!d1 || !d2) return false;
+        return d1.getTime() == d2.getTime();
+      },
+      
+      isSameDay: function(d1, d2) {
+        if (!d1 || !d2) return false;
+        return this.dateUtils.format(d1) == this.dateUtils.format(d2);
+      },
+
+      isDayInMonth: function(d1, d2) {
+        if (!d1 || !d2) return false;
+        return (d2.getMonth() + d2.getYear()) == (d1.getMonth() + d1.getYear())
+      },
+
+      dateChanged: function(oldDate, newDate) {
+        // if the month & year hasn't changed, no need to update
+        if (oldDate && 
+            oldDate.getMonth() == newDate.getMonth() &&
+            oldDate.getFullYear() == newDate.getFullYear()) {
+          return;
+        }
+
+        // updates the model data for the weeks grids
+        this.weeksFull = this.dateUtils.getWeekArray(this.date);
+        this.weeks = this.dateUtils.getWeekArray(this.date).map(function(week){
+          if (!week || week == null) return null;
+          return week.map(function(day){
+            return day ? day.getDate() : null;
+          })
+        });
+
+        // hacky - using our parent's methods
+        this.templateInstance.model.renderNode(this.$.days.querySelector('.weeks'));
+      },
+
+      updateWeeks: function() {
+        
+      },
+
+      selectDay: function(e, detail, sender) {
+        this.fire('d-calendar-date-selected', {date: sender.getAttribute('date')});
+      }
+
+    })
+    
+  })()
+  </script>
+</polymer-element>
+
+
+
+

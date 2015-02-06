@@ -3,16 +3,19 @@
 <head>  
   <meta name="viewport" content="width=device-width, user-scalable=no">  
   <title>d-calendar Demo</title> 
+  <link rel="import" href="bower_components/core-input/core-input.html"> 
   <link rel="import" href="d-calendar.html">
+
   <style>
     body {
+      font-family: RobotoDraft;
       -webkit-font-smoothing: antialiased; background: #DDD;
       -webkit-tap-highlight-color: rgba(0,0,0,0);
       -webkit-touch-callout: none;
       background: #CFD8DC;
     }
     d-calendar {
-      margin: 24px 12px;
+      margin: 0px 12px;
       box-shadow: 0px 3px 5px rgba(0,0,0,0.2);
     }
     .swatch-bar {
@@ -30,16 +33,39 @@
       margin: 12px;
       box-shadow: 0px 1px 3px rgba(0,0,0,0.2);
     }
+    #dateDisplay {
+      width: 577px;
+      margin: 40px;
+    }
+    #dateDisplay input {
+      font-family: RobotoDraft;
+      font-weight: 300;
+      border: 0;
+      background: 0;
+      padding: 0;
+      margin: 0;
+      font-size: 40px;
+      display: block;
+      width: 100%;
+      text-align: center;
+    }
+    #dateDisplay input:focus {
+      outline: none;
+    }
   </style>
 </head>
 
-<body unresolved fullbleed layout vertical center-justified center> 
+<body unresolved fullbleed layout vertical center center-justified> 
 
   <template id="sandbox" is="auto-binding">
-    
-    <div layout horizontal>
-      <d-calendar class="light-theme"></d-calendar>
-      <d-calendar></d-calendar>
+
+    <div layout horizontal center center-justified>
+      <d-calendar selectedDate="{{selectedDate}}" date="{{date}}" class="light-theme" on-d-calendar-date-selected="{{dateSelected}}"></d-calendar>
+      <d-calendar selectedDate="{{selectedDate}}"></d-calendar>
+    </div>
+
+    <div id="dateDisplay">
+      <input id="dateinput" placeholder="Selected Date" is="core-input" committedValue="{{selectedDate}}"></input>
     </div>
 
     <div class="swatch-bar">
@@ -51,7 +77,16 @@
   </template>
 
   <script>
+  window.addEventListener('template-bound', function(){
     var sandbox = document.getElementById('sandbox');
+
+    sandbox.dateSelected = function(ev, detail, sender){
+      this.updateDateInputValue();
+    }
+
+    sandbox.updateDateInputValue = function(){
+      sandbox.$.dateinput.value = PolymerExpressions.prototype.date(this.selectedDate);
+    }
 
     sandbox.colors = [
       '#f44336',
@@ -69,7 +104,7 @@
       '#FF9800',
       '#FF5722',
       '#795548',
-      '#9E9E9E',
+      '#9E9E9E', 
       '#607D8B'
     ];
 
@@ -80,6 +115,10 @@
     }
 
     sandbox.selectedColor = '#2196F3';
+    
+    sandbox.updateDateInputValue();
+
+  })
   </script>
  
 </body> 

@@ -7,7 +7,9 @@
   "description": "A Polymer Web Component Calendar and Datepicker based on the Material Design spec",
   "keywords": [
     "calendar",
-    "datepicker"
+    "datepicker",
+    "Polymer",
+    "web-components"
   ],
   "license": "MIT",
   "ignore": [
@@ -23,6 +25,8 @@
     "core-meta": "Polymer/core-meta#~0.5.4",
     "core-style": "Polymer/core-style#~0.5.4",
     "paper-icon-button": "Polymer/paper-icon-button#~0.5.4",
-    "paper-button": "Polymer/paper-button#~0.5.4"
+    "paper-button": "Polymer/paper-button#~0.5.4",
+    "core-media-query": "Polymer/core-media-query#~0.5.4",
+    "paper-input": "Polymer/paper-input#~0.5.4"
   }
 }

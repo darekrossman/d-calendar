@@ -10,6 +10,15 @@ Element for displaying the grid of days in each month.
 @status alpha
 @homepage https://github.com/subpopular/d-calendar-week
 -->
+
+<!--
+Fired when selecting a specific day of the month.
+
+@event d-calendar-date-selected
+@param {Object} detail
+  @param {string} detail.date the selected date
+-->
+
 <polymer-element name="d-calendar-weeks" attributes="date selectedDate">
   <template>
     <core-style ref="d-calendar-theme-weeks"></core-style>
@@ -53,7 +62,6 @@ Element for displaying the grid of days in each month.
       },
 
       domReady: function() {
-        console.log(this.selectedDate)
         this.updateWeeks();
       }, 
 

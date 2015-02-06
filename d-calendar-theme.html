@@ -19,6 +19,7 @@
    cursor: default;
   }
 
+
   #selectedWeekdayHeader {
     color: #FFF;
     height: 36px;
@@ -37,6 +38,7 @@
   }
 
   #selectedDateHeader {
+    box-sizing: border-box;
     background: rgba(255, 255, 255, 0.05);
     color: #FFF;
     padding: 12px 0;
@@ -45,6 +47,9 @@
   }
   :host(.light-theme) #selectedDateHeader {
     background: {{scaleColor(g.dCalendar.accentColor, 10)}};
+  }
+  #wrapper[horizontal] #selectedDateHeader {
+    height: 264px;
   }
 
   #selectedDateHeader > div {
@@ -81,6 +86,26 @@
   }
   .selectedYear {
     color: rgba(255, 255, 255, 0.6);
+  }
+
+  
+  #wrapper[horizontal] #selectedMonth,
+  #wrapper[horizontal] #selectedYear {
+    height: 50px;
+  }
+  #wrapper[horizontal] #selectedDay {
+    height: 90px;
+  }
+  #wrapper[horizontal] .selectedMonth,
+  #wrapper[horizontal] .selectedYear {
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 50px;
+    letter-spacing: 0.05em;
+  }
+  #wrapper[horizontal] .selectedDay {
+    font-size: 86px;
+    line-height: 90px;
   }
 
   #calendar {
@@ -128,9 +153,63 @@
     width: 276px;
     overflow: hidden;
   }
+  #calendar-selection {
+    width: 276px;
+  }
 
   .weekday {
     margin: 0 12px;
+  }
+
+  .slideup,
+  ::shadow .slideup {  
+    transition: all .4s cubic-bezier(0.390, 0.575, 0.135, 0.995); 
+    -webkit-transition: all .4s cubic-bezier(0.390, 0.575, 0.135, 0.995); 
+    position: absolute;
+    -webkit-transform: translateY(100%);
+    transform: translateY(100%);
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    opacity: 0;
+    z-index: 0;
+  }
+  .slideup.in,
+  ::shadow .slideup.in {
+    -webkit-transform: translateY(0px);
+    transform: translateY(0px);
+    z-index: 1;
+    opacity: 0.9;
+  }
+  .slideup.out,
+  ::shadow .slideup.out {
+    -webkit-transform: translateY(-100%);
+    transform: translateY(-100%);
+    z-index: 0;
+    opacity: 0;
+  }  
+
+  .slideleft,
+  ::shadow .slideleft {
+    transition: all .3s cubic-bezier(0.390, 0.575, 0.135, 0.995); 
+    -webkit-transition: all .3s cubic-bezier(0.390, 0.575, 0.135, 0.995); 
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+  }
+  .slideleft.in,
+  ::shadow .slideleft.in {
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+  }
+  .slideleft.out,
+  ::shadow .slideleft.out {
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
   }
 
 </core-style>
@@ -220,17 +299,17 @@
 </core-style>
 
 <script>
+
   (function(){
     
     CoreStyle.g.dCalendar = {
       accentColor: '#2196F3',
       bgColor: '#2c3a40' 
-    }
+    };
 
     document._currentScript.ownerDocument.getElementById('d-calendar-theme').scaleColor = scaleColor;
 
     function scaleColor(col, amt) {
-      console.log(col)
       var usePound = false;
       if (col[0] == "#") {
         col = col.slice(1);
@@ -250,6 +329,7 @@
     }
     
   })()
+
 </script>
 
 

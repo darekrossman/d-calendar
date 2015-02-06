@@ -1,5 +1,6 @@
 <link rel="import" href="bower_components/polymer/polymer.html">
 <link rel="import" href="bower_components/paper-button/paper-button.html"/>
+<link rel="import" href="d-calendar-theme.html"/>
 <link rel="import" href="d-date-utils.html"/>
 
 <polymer-element name="d-calendar-years" attributes="startYear years viewingYear">
@@ -27,7 +28,7 @@
       yearsArray: Array(this.years),
       
       ready: function(){
-        var now = new Date().getFullYear();
+        var now = this.viewingYear || new Date().getFullYear();
         this.startYear = this.startYear || now - 2;
         this.years = this.years || 15;
       },
@@ -39,7 +40,6 @@
       yearSelected: function(e, detail, sender) {
         this.fire('d-calendar-year-selected', {year: sender.getAttribute('year')})
       }
-      
     })
     
   })()

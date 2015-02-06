@@ -2,6 +2,7 @@
 <link rel="import" href="bower_components/font-roboto/roboto.html"/>
 <link rel="import" href="bower_components/core-meta/core-meta.html"/>
 <link rel="import" href="bower_components/core-style/core-style.html"/>
+<link rel="import" href="bower_components/core-media-query/core-media-query.html"/>
 <link rel="import" href="bower_components/core-animated-pages/core-animated-pages.html"/>
 <link rel="import" href="bower_components/core-animated-pages/transitions/slide-up.html"/>
 <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html"/>
@@ -22,30 +23,45 @@ Example
 @status alpha
 @homepage https://github.com/subpopular/d-calendar
 -->
+
+
+<!--
+Fired when an item element is tapped.
+
+@event core-activate
+@param {Object} detail
+  @param {Object} detail.item the item element
+-->
+
+
 <polymer-element name="d-calendar" attributes="selectedDate viewingDate date" touch-action="auto">
   <template id="template">
 
     <core-style ref="d-calendar-theme"></core-style>
 
-    <link rel="stylesheet" href="d-calendar.css">
+    <core-media-query query="max-height: 360px" queryMatches="{{landscape}}"></core-media-query>
 
     <d-date-utils id="dateUtils"></d-date-utils>
 
-    <div id="selectedWeekdayHeader" layout horizontal>
-      <div relative flex id="selectedWeekday">
-        <div class="selectedWeekday slideup animate">{{selectedWeekday}}</div> 
-      </div>
-    </div> 
+    <div id="wrapper" layout horizontal?="{{landscape}}" vertical?="{{!landscape}}">
 
-    <div id="selectedDateHeader" layout vertical center>
-      <div id="selectedMonth">
-        <div class="selectedMonth slideup animate" style="text-transform: uppercase">{{selectedMonth}}</div>
-      </div>
-      <div id="selectedDay">
-        <div class="selectedDay slideup animate" view="dateView" on-tap="{{viewSelectAction}}">{{selectedDay}}</div>
-      </div>
-      <div id="selectedYear">
-        <div class="selectedYear slideup animate" view="yearView" on-tap="{{viewSelectAction}}">{{selectedYear}}</div>
+    <div id="calendar-selection">
+      <div id="selectedWeekdayHeader" layout horizontal>
+        <div relative flex id="selectedWeekday">
+          <div class="selectedWeekday slideup animate">{{selectedWeekday}}</div> 
+        </div>
+      </div> 
+
+      <div id="selectedDateHeader" layout vertical center center-justified>
+        <div id="selectedMonth">
+          <div class="selectedMonth slideup animate" style="text-transform: uppercase">{{selectedMonth}}</div>
+        </div>
+        <div id="selectedDay">
+          <div class="selectedDay slideup animate" view="dateView" on-tap="{{viewSelectAction}}">{{selectedDay}}</div>
+        </div>
+        <div id="selectedYear">
+          <div class="selectedYear slideup animate" view="yearView" on-tap="{{viewSelectAction}}">{{selectedYear}}</div>
+        </div>
       </div>
     </div>
 
@@ -88,11 +104,10 @@ Example
         </section>
           
       </core-animated-pages>
-
     </div>
 
 
-    
+    </div>
     
   </template>
 
@@ -106,16 +121,17 @@ Example
        *
        * @attribute selectedDate
        * @type string
-       * @default {current date}
+       * @default {current date} 
        */
       selectedDate: null,
 
       /**
-       * The `author` attribute sets an initial author
+       * The `selectedView` attribute gets/sets the calendar view
+       * to one of `dateView` or `yearView`.
        *
-       * @attribute author
+       * @attribute selectedView
        * @type string
-       * @default 'Dimitri Glazkov'
+       * @default 'dateView'
        */
       selectedView: 'dateView',
 
@@ -133,18 +149,34 @@ Example
         this.viewingDate.setDate(1);
         this.nowDate = new Date();
       
-        document.addEventListener('keyup', this.keyup.bind(this))
+        this.addEventListener('keyup', this.keyup.bind(this))
       },
 
       selectedDateChanged: function(olddate, newdate) {
+        
+        if (olddate && !olddate.getTime) olddate = new Date(olddate);
+
+        if (newdate && !newdate.getTime) {
+          newdate = new Date(newdate)
+          if (!newdate.getTime) return
+          this.selectedDate = newdate;
+        }
+
         this.reverseAnimation = olddate && olddate.getTime() > newdate.getTime();
         this.async(this.updateSelectedDateProps);
         this.date = this.selectedDate;
+
+        this.focus();
+        this.fire('d-calendar-date-selected', {date: this.selectedDate})
       },
 
       viewingDateChanged: function(olddate, newdate) {
         this.reverseAnimation = olddate && olddate.getTime() > newdate.getTime();
         this.async(this.updateViewingDateProps)
+      },
+
+      dateChanged: function(olddate, newdate) {
+        
       },
 
       /**
@@ -176,7 +208,7 @@ Example
       },
 
       viewSelectAction: function(ev, detail, sender) {
-        this.selectedView = (sender.getAttribute('view'));
+        this.selectedView = (sender.getAttribute('view')); 
       },
 
       dateSelectAction: function(ev, detail, sender) {

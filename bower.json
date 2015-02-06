@@ -4,6 +4,10 @@
   "authors": [
     "Darek Rossman <darek_rossman@valpak.com>"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/subpopular/d-calendar.git"
+  },
   "description": "A Polymer Web Component Calendar and Datepicker based on the Material Design spec",
   "keywords": [
     "calendar",

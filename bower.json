@@ -2,7 +2,8 @@
   "name": "d-calendar",
   "version": "1.5.0",
   "authors": [
-    "Darek Rossman <darek_rossman@valpak.com>"
+    "Darek Rossman <darek_rossman@valpak.com>",
+    "Enrique Zanardi <ezanardi@atlantux.com>"
   ],
   "repository": {
     "type": "git",

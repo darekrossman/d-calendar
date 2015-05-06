@@ -2,7 +2,6 @@
 <polymer-element name="d-date-utils" hidden>
   <script>
     Polymer({
-
       addDays: function(d, days) {
         var newDate = this.clone(d);
         newDate.setDate(d.getDate() + days);
@@ -30,68 +29,6 @@
 
       getFirstDayOfMonth: function(d) {
         return new Date(d.getFullYear(), d.getMonth(), 1);
-      },
-
-      monthNames: [
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July',
-          'August',
-          'September',
-          'October',
-          'November',
-          'December'
-      ],
-
-      shortMonthNames: [
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sep',
-          'Oct',
-          'Nov',
-          'Dec'
-      ],
-
-      dayNames: [
-          'Sunday',
-          'Monday',
-          'Tuesday',
-          'Wednesday',
-          'Thursday',
-          'Friday',
-          'Saturday'
-      ],
-
-      shortDayNames: [
-          'S',
-          'M',
-          'T',
-          'W',
-          'T',
-          'F',
-          'S'
-      ],
-
-      getFullMonth: function(d) {
-        return this.monthNames[d.getMonth()];
-      },
-
-      getShortMonth: function(d) {
-        return this.shortMonthNames[d.getMonth()];
-      },
-
-      getDayOfWeek: function(d) {
-        return this.dayNames[d.getDay()];
       },
 
       getWeekArray: function(d) {

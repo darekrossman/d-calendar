@@ -48,9 +48,9 @@ Fired when an item element is tapped.
     <div id="calendar-selection">
       <div id="selectedWeekdayHeader" layout horizontal>
         <div relative flex id="selectedWeekday">
-          <div class="selectedWeekday slideup animate">{{selectedWeekday}}</div> 
+          <div class="selectedWeekday slideup animate">{{selectedWeekday}}</div>
         </div>
-      </div> 
+      </div>
 
       <div id="selectedDateHeader" layout vertical center center-justified>
         <div id="selectedMonth">
@@ -69,7 +69,7 @@ Fired when an item element is tapped.
 
       <core-animated-pages id="views" selected="{{selectedView}}" transitions="slide-up hero-transition cross-fade-delayed cross-fade">
         <section name="dateView">
-          
+
           <div cross-fade>
 
             <div id="header" layout horizontal>
@@ -86,12 +86,12 @@ Fired when an item element is tapped.
               </template>
             </div>
             <d-calendar-weeks
-              date="{{viewingDate}}" 
-              selectedDate="{{selectedDate}}" 
+              date="{{viewingDate}}"
+              selectedDate="{{selectedDate}}"
               on-d-calendar-date-selected="{{dateSelectAction}}">
             </d-calendar-weeks>
           </div>
-         
+
         </section>
 
         <section name="yearView">
@@ -102,13 +102,13 @@ Fired when an item element is tapped.
             </d-calendar-years>
           </div>
         </section>
-          
+
       </core-animated-pages>
     </div>
 
 
     </div>
-    
+
   </template>
 
   <script>
@@ -121,7 +121,7 @@ Fired when an item element is tapped.
        *
        * @attribute selectedDate
        * @type string
-       * @default {current date} 
+       * @default {current date}
        */
       selectedDate: null,
 
@@ -143,22 +143,22 @@ Fired when an item element is tapped.
           this.selectedDate = new Date();
         else
           this.selectedDate = new Date(this.selectedDate);
-        
-        this.weekdays = ['S','M','T','W','T','F','S'];
-        this.viewingDate = this.viewingDate || new Date(this.selectedDate)
+
+        this.weekdays = this.dateUtils.shortDayNames;
+        this.viewingDate = this.viewingDate || new Date(this.selectedDate);
         this.viewingDate.setDate(1);
         this.nowDate = new Date();
-      
-        this.addEventListener('keyup', this.keyup.bind(this))
+
+        this.addEventListener('keyup', this.keyup.bind(this));
       },
 
       selectedDateChanged: function(olddate, newdate) {
-        
+
         if (olddate && !olddate.getTime) olddate = new Date(olddate);
 
         if (newdate && !newdate.getTime) {
-          newdate = new Date(newdate)
-          if (!newdate.getTime) return
+          newdate = new Date(newdate);
+          if (!newdate.getTime) return;
           this.selectedDate = newdate;
         }
 
@@ -176,7 +176,7 @@ Fired when an item element is tapped.
       },
 
       dateChanged: function(olddate, newdate) {
-        
+
       },
 
       /**
@@ -203,12 +203,12 @@ Fired when an item element is tapped.
         this.viewingDate = this.dateUtils.addMonths(this.viewingDate, 1);
       },
 
-      prevAction: function() {      
+      prevAction: function() {
         this.viewingDate = this.dateUtils.addMonths(this.viewingDate, -1);
       },
 
       viewSelectAction: function(ev, detail, sender) {
-        this.selectedView = (sender.getAttribute('view')); 
+        this.selectedView = (sender.getAttribute('view'));
       },
 
       dateSelectAction: function(ev, detail, sender) {
@@ -217,12 +217,12 @@ Fired when an item element is tapped.
 
       yearSelectAction: function(ev, detail, sender) {
         var year = ev.detail.year;
-        
+
         this.disablePropertyAnimations = true;
         this.viewingDate = new Date(year, this.viewingDate.getMonth(), 1);
         this.async(function(){
-          this.$.views.selected = 'dateView';  
-          this.disablePropertyAnimations = false; 
+          this.$.views.selected = 'dateView';
+          this.disablePropertyAnimations = false;
         }, null, 280);
       },
 
@@ -232,7 +232,7 @@ Fired when an item element is tapped.
         var delayRemovalTime = 400;
         var el = element;
         var elClone = el.cloneNode(true);
-    
+
         el._originalTransition = element.style.transition;
         el.style.transition = 'none';
         el.parentElement.appendChild(elClone);
@@ -311,11 +311,7 @@ Fired when an item element is tapped.
     })
 
     Polymer('d-calendar', prototype);
-    
+
   })()
   </script>
 </polymer-element>
-
-
-
-

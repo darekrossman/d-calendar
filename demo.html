@@ -60,12 +60,12 @@
   <template id="sandbox" is="auto-binding">
 
     <div layout horizontal center center-justified>
-      <d-calendar selectedDate="{{selectedDate}}" date="{{date}}" class="light-theme" on-d-calendar-date-selected="{{dateSelected}}"></d-calendar>
+      <d-calendar selectedDate="{{selectedDate}}" class="light-theme"></d-calendar>
       <d-calendar selectedDate="{{selectedDate}}"></d-calendar>
     </div>
 
     <div id="dateDisplay">
-      <input id="dateinput" placeholder="Selected Date" is="core-input" committedValue="{{selectedDate}}"></input>
+      <input id="dateinput" placeholder="Selected Date" is="core-input" value="{{selectedDate | date }}"></input>
     </div>
 
     <div class="swatch-bar">
@@ -73,20 +73,14 @@
         <div class="swatch" on-tap="{{selectColor}}" color="{{color}}" style="background-color: {{color}}"></div>
       </template>
     </div>
-  
+
   </template>
 
   <script>
   window.addEventListener('template-bound', function(){
     var sandbox = document.getElementById('sandbox');
 
-    sandbox.dateSelected = function(ev, detail, sender){
-      this.updateDateInputValue();
-    }
-
-    sandbox.updateDateInputValue = function(){
-      sandbox.$.dateinput.value = PolymerExpressions.prototype.date(this.selectedDate);
-    }
+    sandbox.selectedDate = PolymerExpressions.prototype.date(Date());
 
     sandbox.colors = [
       '#f44336',
@@ -115,11 +109,8 @@
     }
 
     sandbox.selectedColor = '#2196F3';
-    
-    sandbox.updateDateInputValue();
-
   })
   </script>
- 
-</body> 
+
+</body>
 </html>

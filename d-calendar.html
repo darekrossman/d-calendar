@@ -34,7 +34,7 @@ Fired when an item element is tapped.
 -->
 
 
-<polymer-element name="d-calendar" attributes="selectedDate viewingDate date language" touch-action="auto">
+<polymer-element name="d-calendar" attributes="selectedDate viewingDate date language forceLandscape displaySelectedDate " touch-action="auto">
   <template id="template">
 
     <core-style ref="d-calendar-theme"></core-style>
@@ -43,9 +43,9 @@ Fired when an item element is tapped.
 
     <d-date-utils id="dateUtils"></d-date-utils>
 
-    <div id="wrapper" layout horizontal?="{{landscape}}" vertical?="{{!landscape}}">
+    <div id="wrapper" layout horizontal?="{{landscape||forceLandscape}}" vertical?="{{!(landscape||forceLandscape)}}">
 
-    <div id="calendar-selection">
+    <div id="calendar-selection" hidden?="{{ displaySelectedDate }}">
       <div id="selectedWeekdayHeader" layout horizontal>
         <div relative flex id="selectedWeekday">
           <div class="selectedWeekday slideup animate">{{selectedWeekday}}</div>
@@ -87,7 +87,7 @@ Fired when an item element is tapped.
             </div>
             <d-calendar-weeks
               date="{{viewingDate}}"
-              selectedDate="{{selectedDate}}"
+              selectedDate="{{slctdDate}}"
               on-d-calendar-date-selected="{{dateSelectAction}}">
             </d-calendar-weeks>
           </div>
@@ -117,7 +117,9 @@ Fired when an item element is tapped.
     var prototype = {
 
       /**
-       * The `selectedDate` attribute sets an initial selectedDate
+       * The `selectedDate` attribute sets an initial selectedDate,
+       * and it is dynamically updated (in 'yyyy-MM-dd' format)
+       * anytime the user selects a different one
        *
        * @attribute selectedDate
        * @type string
@@ -134,6 +136,24 @@ Fired when an item element is tapped.
        * @default 'dateView'
        */
       selectedView: 'dateView',
+
+      /**
+       * The `forceLandscape` attribute forces horizontal layout for the calendar
+       *
+       * @attribute forceLandscape
+       * @type boolean
+       * @default false
+       */
+      forceLandscape: false,
+
+      /**
+       * If `displaySelectedDate` attribute is true, the selected date is displayed in a big card besides the calendar
+       *
+       * @attribute displaySelectedDate
+       * @type boolean
+       * @default true
+       */
+      displaySelectedDate: true,
 
       /**
        * The `language` attribute sets the language for localized day and month names
@@ -270,12 +290,12 @@ Fired when an item element is tapped.
         this.dateUtils = this.$.dateUtils;
 
         if (!this.selectedDate)
-          this.selectedDate = new Date();
+          this.slctdDate = new Date();
         else
-          this.selectedDate = new Date(this.selectedDate);
+          this.slctdDate = new Date(this.selectedDate);
 
         this.weekdays = this.getShortDayNames();
-        this.viewingDate = this.viewingDate || new Date(this.selectedDate);
+        this.viewingDate = this.viewingDate || new Date(this.slctdDate);
         this.viewingDate.setDate(1);
         this.nowDate = new Date();
 
@@ -283,24 +303,36 @@ Fired when an item element is tapped.
       },
 
       selectedDateChanged: function(olddate, newdate) {
+        this.slctdDate = new Date(this.selectedDate);
+        this.viewingDate = new Date(this.slctdDate);
+        this.viewingDate.setDate(1);
+      },
 
+      slctdDateChanged: function(olddate, newdate) {
         if (olddate && !olddate.getTime) olddate = new Date(olddate);
 
         if (newdate && !newdate.getTime) {
           newdate = new Date(newdate);
           if (!newdate.getTime) return;
-          this.selectedDate = newdate;
+          this.slctdDate = newdate;
+        }
+        if (this.dateUtils.isEqualDate(olddate, newdate)) {
+          return;
         }
 
         this.reverseAnimation = olddate && olddate.getTime() > newdate.getTime();
         this.async(this.updateSelectedDateProps);
-        this.date = this.selectedDate;
+        this.date = this.slctdDate;
+        this.selectedDate = PolymerExpressions.prototype.date(this.slctdDate,"yyyy-MM-dd");
 
         this.focus();
-        this.fire('d-calendar-date-selected', {date: this.selectedDate})
+        this.fire('d-calendar-date-selected', {date: this.slctdDate})
       },
 
       viewingDateChanged: function(olddate, newdate) {
+        if (this.dateUtils.isEqualDate(olddate, newdate)) {
+          return;
+        }
         this.reverseAnimation = olddate && olddate.getTime() > newdate.getTime();
         this.async(this.updateViewingDateProps)
       },
@@ -317,10 +349,10 @@ Fired when an item element is tapped.
        * @return {String} Returns a string greeting.
        */
       updateSelectedDateProps: function() {
-        this.selectedWeekday = this.getDayOfWeek(this.selectedDate);
-        this.selectedMonth = this.getShortMonth(this.selectedDate);
-        this.selectedDay = this.selectedDate.getDate();
-        this.selectedYear = this.selectedDate.getFullYear();
+        this.selectedWeekday = this.getDayOfWeek(this.slctdDate);
+        this.selectedMonth = this.getShortMonth(this.slctdDate);
+        this.selectedDay = this.slctdDate.getDate();
+        this.selectedYear = this.slctdDate.getFullYear();
       },
 
       updateViewingDateProps: function() {
@@ -342,7 +374,7 @@ Fired when an item element is tapped.
       },
 
       dateSelectAction: function(ev, detail, sender) {
-        this.selectedDate = new Date(ev.detail.date);
+        this.slctdDate = new Date(ev.detail.date);
       },
 
       yearSelectAction: function(ev, detail, sender) {
@@ -393,7 +425,7 @@ Fired when an item element is tapped.
       },
 
       keyup: function(e){
-        var month = this.selectedDate.getMonth();
+        var month = this.slctdDate.getMonth();
         switch (e.keyCode) {
           case 37:
             this.prevAction()

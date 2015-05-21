@@ -34,7 +34,7 @@ Fired when an item element is tapped.
 -->
 
 
-<polymer-element name="d-calendar" attributes="selectedDate viewingDate date language" touch-action="auto">
+<polymer-element name="d-calendar" attributes="selectedDate viewingDate date language forceLandscape displaySelectedDate " touch-action="auto">
   <template id="template">
 
     <core-style ref="d-calendar-theme"></core-style>
@@ -43,9 +43,9 @@ Fired when an item element is tapped.
 
     <d-date-utils id="dateUtils"></d-date-utils>
 
-    <div id="wrapper" layout horizontal?="{{landscape}}" vertical?="{{!landscape}}">
+    <div id="wrapper" layout horizontal?="{{landscape||forceLandscape}}" vertical?="{{!(landscape||forceLandscape)}}">
 
-    <div id="calendar-selection">
+    <div id="calendar-selection" hidden?="{{ displaySelectedDate }}">
       <div id="selectedWeekdayHeader" layout horizontal>
         <div relative flex id="selectedWeekday">
           <div class="selectedWeekday slideup animate">{{selectedWeekday}}</div>
@@ -136,6 +136,24 @@ Fired when an item element is tapped.
        * @default 'dateView'
        */
       selectedView: 'dateView',
+
+      /**
+       * The `forceLandscape` attribute forces horizontal layout for the calendar
+       *
+       * @attribute forceLandscape
+       * @type boolean
+       * @default false
+       */
+      forceLandscape: false,
+
+      /**
+       * If `displaySelectedDate` attribute is true, the selected date is displayed in a big card besides the calendar
+       *
+       * @attribute displaySelectedDate
+       * @type boolean
+       * @default true
+       */
+      displaySelectedDate: true,
 
       /**
        * The `language` attribute sets the language for localized day and month names

@@ -34,7 +34,7 @@ Fired when an item element is tapped.
 -->
 
 
-<polymer-element name="d-calendar" attributes="selectedDate viewingDate date language" touch-action="auto">
+<polymer-element name="d-calendar" attributes="selectedDate viewingDate date language header" touch-action="auto">
   <template id="template">
 
     <core-style ref="d-calendar-theme"></core-style>
@@ -45,7 +45,7 @@ Fired when an item element is tapped.
 
     <div id="wrapper" layout horizontal?="{{landscape}}" vertical?="{{!landscape}}">
 
-    <div id="calendar-selection">
+    <div id="calendar-selection" hidden?="{{ !header }}">
       <div id="selectedWeekdayHeader" layout horizontal>
         <div relative flex id="selectedWeekday">
           <div class="selectedWeekday slideup animate">{{selectedWeekday}}</div>

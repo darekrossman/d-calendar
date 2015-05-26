@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>  
-  <meta name="viewport" content="width=device-width, user-scalable=no">  
-  <title>d-calendar Demo</title> 
-  <link rel="import" href="../core-input/core-input.html"> 
+<head>
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <title>d-calendar Demo</title>
+  <link rel="import" href="../core-input/core-input.html">
+  <link rel="import" href="../polymer-filters/polymer-filters.html">
   <link rel="import" href="d-calendar.html">
 
   <style>
@@ -28,7 +29,7 @@
     .swatch {
       width: 36px;
       height: 36px;
-      cursor: pointer; 
+      cursor: pointer;
       border-radius: 50%;
       margin: 12px;
       box-shadow: 0px 1px 3px rgba(0,0,0,0.2);
@@ -55,38 +56,31 @@
   </style>
 </head>
 
-<body unresolved fullbleed layout vertical center center-justified> 
+<body unresolved fullbleed layout vertical center center-justified>
 
   <template id="sandbox" is="auto-binding">
 
     <div layout horizontal center center-justified>
       <d-calendar selectedDate="{{selectedDate}}" date="{{date}}" class="light-theme" on-d-calendar-date-selected="{{dateSelected}}"></d-calendar>
+      <d-calendar selectedDate="{{selectedDate}}" header class="light-theme"></d-calendar>
       <d-calendar selectedDate="{{selectedDate}}"></d-calendar>
     </div>
 
     <div id="dateDisplay">
-      <input id="dateinput" placeholder="Selected Date" is="core-input" committedValue="{{selectedDate}}"></input>
+      <input id="dateinput" placeholder="Selected Date" value="{{ selectedDate }}"></input>
     </div>
 
     <div class="swatch-bar">
       <template repeat="{{color in colors}}">
-        <div class="swatch" on-tap="{{selectColor}}" color="{{color}}" style="background-color: {{color}}"></div>
+        <div class="swatch" on-tap="{{selectColor}}" data-color="{{color}}" style="background-color: {{color}}"></div>
       </template>
     </div>
-  
+
   </template>
 
   <script>
   window.addEventListener('template-bound', function(){
     var sandbox = document.getElementById('sandbox');
-
-    sandbox.dateSelected = function(ev, detail, sender){
-      this.updateDateInputValue();
-    }
-
-    sandbox.updateDateInputValue = function(){
-      sandbox.$.dateinput.value = PolymerExpressions.prototype.date(this.selectedDate);
-    }
 
     sandbox.colors = [
       '#f44336',
@@ -104,22 +98,22 @@
       '#FF9800',
       '#FF5722',
       '#795548',
-      '#9E9E9E', 
+      '#9E9E9E',
       '#607D8B'
     ];
 
-    sandbox.selectColor = function(ev, detail, sender){
-      var selectedColor = sender.getAttribute('color');
-      sandbox.selectedColor = selectedColor;
-      CoreStyle.g.dCalendar.accentColor = selectedColor;
+    sandbox.dateSelected = function(ev) {
+      console.log("Date selected: ", ev.detail);
+    }
+
+    sandbox.selectColor = function(ev, detail, sender) {
+      sandbox.selectedColor = sender.dataset.color;
+      CoreStyle.g.dCalendar.accentColor = sandbox.selectedColor;
     }
 
     sandbox.selectedColor = '#2196F3';
-    
-    sandbox.updateDateInputValue();
-
   })
   </script>
- 
-</body> 
+
+</body>
 </html>

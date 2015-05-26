@@ -9,7 +9,7 @@
 <link rel="import" href="d-calendar-theme.html"/>
 <link rel="import" href="d-calendar-weeks.html"/>
 <link rel="import" href="d-calendar-years.html"/>
-<link rel="import" href="d-date-utils.html"/> 
+<link rel="import" href="d-date-utils.html"/>
 
 <!--
 Element providing an interactive calendar and datepicker.
@@ -143,6 +143,16 @@ Fired when an item element is tapped.
        * @default 'en'
        */
       language: 'en',
+
+      /**
+       * The `header` attribute controls visibility of header with selected date
+       *
+       * @attribute header
+       * @type boolean
+       * @default {false}
+       */
+       header: false,
+
 
       locale: {
         'en': {
@@ -376,11 +386,11 @@ Fired when an item element is tapped.
         this.async(function(){
           el.style.transition = el._originalTransition;
           if (!this.reverseAnimation) {
-            elClone.classList.add('out'); // animate to end position 
+            elClone.classList.add('out'); // animate to end position
           } else {
             elClone.classList.remove('in'); // animate to start position
             el.classList.remove('out'); // animate to start position
-          } 
+          }
           el.classList.add('in');
         });
 

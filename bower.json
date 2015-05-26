@@ -33,5 +33,8 @@
     "paper-button": "Polymer/paper-button#~0.5.4",
     "core-media-query": "Polymer/core-media-query#~0.5.4",
     "paper-input": "Polymer/paper-input#~0.5.4"
+  },
+  "devDependencies": {
+    "polymer-filters": "~0.2.1"
   }
 }

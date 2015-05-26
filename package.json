@@ -1,0 +1,18 @@
+{
+  "name": "d-calendar",
+  "description": "calendar component",
+  "scripts": {
+    "start": "./node_modules/polyserve/bin/polyserve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:subpopular/d-calendar.git"
+  },
+  "keywords": [
+    "polymer",
+    "calendar"
+  ],
+  "devDependencies": {
+    "polyserve": "^0.4.0"
+  }
+}

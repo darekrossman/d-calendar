@@ -4,4 +4,12 @@ A datepicker web component built with Polymer and based on Google's Material Des
 
 View the [demo](http://subpopular.github.io/d-calendar/components/d-calendar/demo.html)
 
+# Development
+
+```bash
+bower install
+npm install
+npm start
+```
+
 Unfortunately I'm not able to maintain this project - hopefully someone will fork it and make it even more awesome!

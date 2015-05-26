@@ -9,7 +9,7 @@
 <link rel="import" href="d-calendar-theme.html"/>
 <link rel="import" href="d-calendar-weeks.html"/>
 <link rel="import" href="d-calendar-years.html"/>
-<link rel="import" href="d-date-utils.html"/> 
+<link rel="import" href="d-date-utils.html"/>
 
 <!--
 Element providing an interactive calendar and datepicker.
@@ -144,6 +144,16 @@ Fired when an item element is tapped.
        */
       language: 'en',
 
+      /**
+       * The `header` attribute controls visibility of header with selected date
+       *
+       * @attribute header
+       * @type boolean
+       * @default {false}
+       */
+       header: false,
+
+
       locale: {
         'en': {
             monthNames: [
@@ -196,6 +206,57 @@ Fired when an item element is tapped.
                 'S'
             ],
         },
+        'eo': {
+            monthNames: [
+                'januaro',
+                'februaro',
+                'marto',
+                'aprilo',
+                'majo',
+                'junio',
+                'julio',
+                'aŭgusto',
+                'septembro',
+                'oktobro',
+                'novembro',
+                'decembro'
+            ],
+
+            shortMonthNames: [
+                'jan',
+                'feb',
+                'mar',
+                'Apr',
+                'maj',
+                'jun',
+                'jul',
+                'aŭg',
+                'sep',
+                'okt',
+                'nov',
+                'dec'
+            ],
+
+            dayNames: [
+                'dimanĉo',
+                'lundo',
+                'mardo',
+                'merkredo',
+                'jaudo',
+                'vendredo',
+                'sabato'
+            ],
+
+            shortDayNames: [
+                'di',
+                'lu',
+                'ma',
+                'me',
+                'ja',
+                've',
+                'sa'
+            ],
+        },
         'es': {
             monthNames: [
                 'Enero',
@@ -245,6 +306,58 @@ Fired when an item element is tapped.
                 'J',
                 'V',
                 'S'
+            ],
+        },
+
+        'ru': {
+            monthNames: [
+                'Январь',
+                'Февраль',
+                'Март',
+                'Апрель',
+                'Май',
+                'Июнь',
+                'Июль',
+                'Август',
+                'Сентябрь',
+                'Октябрь',
+                'Ноябрь',
+                'Декабрь'
+            ],
+
+            shortMonthNames: [
+                'Янв',
+                'Фев',
+                'Мар',
+                'Апр',
+                'Май',
+                'Июн',
+                'Июл',
+                'Авг',
+                'Сен',
+                'Окт',
+                'Ноя',
+                'Дек'
+            ],
+
+            dayNames: [
+                'Воскресенье',
+                'Понедельник',
+                'Вторник',
+                'Среда',
+                'Четверг',
+                'Пятница',
+                'Суббота'
+            ],
+
+            shortDayNames: [
+                'Вс',
+                'Пн',
+                'Вт',
+                'Ср',
+                'Чт',
+                'Пт',
+                'Сб'
             ],
         },
       },
@@ -376,11 +489,11 @@ Fired when an item element is tapped.
         this.async(function(){
           el.style.transition = el._originalTransition;
           if (!this.reverseAnimation) {
-            elClone.classList.add('out'); // animate to end position 
+            elClone.classList.add('out'); // animate to end position
           } else {
             elClone.classList.remove('in'); // animate to start position
             el.classList.remove('out'); // animate to start position
-          } 
+          }
           el.classList.add('in');
         });
 

@@ -35,6 +35,7 @@
     "paper-input": "PolymerElements/paper-input#~0.9.0"
   },
   "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#~0.9.0",
     "polymer-filters": "~0.2.1"
   }
 }

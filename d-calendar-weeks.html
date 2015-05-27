@@ -19,9 +19,9 @@ Fired when selecting a specific day of the month.
   @param {string} detail.date the selected date
 -->
 
-<polymer-element name="d-calendar-weeks" attributes="date selectedDate">
+<dom-module id="d-calendar-weeks">
   <template>
-    <core-style ref="d-calendar-theme-weeks"></core-style>
+    <iron-style ref="d-calendar-theme-weeks"></iron-style>
     <d-date-utils id="dateUtils"></d-date-utils>
 
     <div id="days">
@@ -39,73 +39,71 @@ Fired when selecting a specific day of the month.
                 <div layout horizontal center>{{day}}</div>
               </div>
             </template>
-
           </template>
         </div>
-
       </div>
     </div>
-
   </template>
+</dom-module>
 
-  <script>
-  (function(){
+<script>
+(function(){
 
-    Polymer('d-calendar-weeks', {
+  Polymer({
+    is: 'd-calendar-weeks',
 
-      ready: function() {
-        this.dateUtils = this.$.dateUtils;
-      },
+    properties: {
+      date: Date,
+      selectedDate: Date
+    },
 
-      created: function() {
-        this.nowDate = new Date();
-      },
+    ready: function() {
+      this.dateUtils = this.$.dateUtils;
+    },
 
-      domReady: function() {
-        this.updateWeeks();
-      },
+    created: function() {
+      this.nowDate = new Date();
+    },
 
-      isSameDay: function(d1, d2) {
-        return this.dateUtils.isEqualDate(d1, d2);
-      },
+    domReady: function() {
+      this.updateWeeks();
+    },
 
-      isSameMonth: function(d1, d2) {
-        return this.dateUtils.isEqualMonth(d1, d2);
-      },
+    isSameDay: function(d1, d2) {
+      return this.dateUtils.isEqualDate(d1, d2);
+    },
 
-      dateChanged: function(oldDate, newDate) {
-        // if the month & year hasn't changed, no need to update
-        if (this.dateUtils.isEqualMonth(oldDate, newDate)) {
-          return;
-        }
+    isSameMonth: function(d1, d2) {
+      return this.dateUtils.isEqualMonth(d1, d2);
+    },
 
-        // updates the model data for the weeks grids
-        this.weeksFull = this.dateUtils.getWeekArray(this.date);
-        this.weeks = this.dateUtils.getWeekArray(this.date).map(function(week){
-          if (!week || week == null) return null;
-          return week.map(function(day){
-            return day ? day.getDate() : null;
-          })
-        });
-
-        // hacky - using our parent's methods
-        this.templateInstance.model.renderNode(this.$.days.querySelector('.weeks'));
-      },
-
-      updateWeeks: function() {
-
-      },
-
-      selectDay: function(e, detail, sender) {
-        this.fire('d-calendar-date-selected', {date: sender.getAttribute('date')});
+    dateChanged: function(oldDate, newDate) {
+      // if the month & year hasn't changed, no need to update
+      if (this.dateUtils.isEqualMonth(oldDate, newDate)) {
+        return;
       }
 
-    })
+      // updates the model data for the weeks grids
+      this.weeksFull = this.dateUtils.getWeekArray(this.date);
+      this.weeks = this.dateUtils.getWeekArray(this.date).map(function(week){
+        if (!week || week == null) return null;
+        return week.map(function(day){
+          return day ? day.getDate() : null;
+        })
+      });
 
-  })()
-  </script>
-</polymer-element>
+      // hacky - using our parent's methods
+      this.templateInstance.model.renderNode(this.$.days.querySelector('.weeks'));
+    },
 
+    updateWeeks: function() {
 
+    },
 
+    selectDay: function(e, detail, sender) {
+      this.fire('d-calendar-date-selected', {date: sender.getAttribute('date')});
+    }
+  })
 
+})()
+</script>

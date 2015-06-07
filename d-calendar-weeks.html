@@ -34,7 +34,7 @@ Fired when selecting a specific day of the month.
               <div layout horizontal center-justified
                   class="day {{isSameDay(weeksFull[w][d], nowDate) ? 'currentday':''}} {{!isSameMonth(weeksFull[w][d], date) ? 'offday':''}}"
                   date="{{weeksFull[w][d]}}"
-                  disabled="{{isValidDay(weeksFull[w][d])}}"
+                  disabled="{{ !isValidDay(weeksFull[w][d]) }}"
                   selected?="{{isSameDay(weeksFull[w][d], selectedDate)}}"
                   on-tap="{{selectDay}}">
                 <div layout horizontal center>{{day}}</div>
@@ -78,14 +78,14 @@ Fired when selecting a specific day of the month.
 
       isValidDay: function(d) {
         if (this.min && d < this.min) {
-          return true;
+          return false;
         }
 
         if (this.max && d > this.max) {
-          return true;
+          return false;
         }
 
-        return false;
+        return true;
       },
 
       dateChanged: function(oldDate, newDate, override) {
@@ -112,12 +112,16 @@ Fired when selecting a specific day of the month.
 
       maxDateChanged: function(oV, nV)
       {
+        if (nV) nV.setHours(0, 0, 0, 0);
+
         this.max = nV;
         this.dateChanged(this.date, this.date, true);
       },
 
       minDateChanged: function(oV, nV)
       {
+        if (nV) nV.setHours(0, 0, 0, 0);
+        
         this.min = nV;
         this.dateChanged(this.date, this.date, true);
       },

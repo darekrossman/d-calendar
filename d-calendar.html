@@ -246,14 +246,14 @@ Fired when an item element is tapped.
        
     
 
-  <template id="template">
-
+  <template>
+      
     <iron-media-query query="max-height: 360px" queryMatches="{{landscape}}"></iron-media-query>
 
     <d-date-utils id="dateUtils"></d-date-utils>
 
     <div id="wrapper" layout horizontal?="{{landscape}}" vertical?="{{!landscape}}">
-
+       
       <div id="calendar-selection" hidden?="{{ !header }}">
         <div id="selectedWeekdayHeader" class="horizontal layout">
           <div relative flex id="selectedWeekday">
@@ -274,12 +274,12 @@ Fired when an item element is tapped.
         </div>
       </div>
 
-      <div id="calendar" layout vertical on-trackx="{{trackx}}" on-trackstart="{{trackstart}}" on-trackend="{{trackend}}">
+      <div id="calendar" class="vertical layout" on-trackx="trackx" on-trackstart="trackstart" on-trackend="trackend">
 
         <iron-pages id="views" selected="{{selectedView}}" transitions="slide-up hero-transition cross-fade-delayed cross-fade">
           <section name="dateView">
             <div cross-fade>
-              <div id="header" layout horizontal>
+              <div id="header" class="horizontal layout">
                 <paper-icon-button icon="chevron-left" on-tap="{{prevAction}}" noink></paper-icon-button>
                 <div flex relative id="viewingMonthYear">
                   <h4 class="viewingMonthYear slideleft animate">{{viewingMonth}} <span view="yearView" on-tap="{{viewSelectAction}}" hero hero-id="poo">{{viewingYear}}</span></h4>
@@ -287,7 +287,7 @@ Fired when an item element is tapped.
                 <paper-icon-button icon="chevron-right" on-tap="{{nextAction}}" noink></paper-icon-button>
               </div>
 
-              <div class="weekday" layout horizontal center>
+              <div class="weekday horizontal layout center">
                 <template repeat="{{weekday in weekdays}}">
                   <div class="weekday-name">{{weekday}}</div>
                 </template>

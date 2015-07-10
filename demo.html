@@ -7,6 +7,7 @@
   <script src="../webcomponentsjs/webcomponents-lite.js"></script>
   
   <link rel="import" href="../paper-input/paper-input.html">
+  <link rel="import" href="../polymer/polymer.html">
 <!--  <link rel="import" href="../polymer-filters/polymer-filters.html">-->
   <link rel="import" href="d-calendar.html">
 
@@ -63,7 +64,7 @@
 
   <template id="sandbox" is="dom-bind">
       
-    <div layout horizontal center center-justified>
+    <div class="horizontal center center-justified layout">
       <d-calendar selected-date="{{selectedDate}}" date="{{date}}" class="light-theme" on-d-calendar-date-selected="{{dateSelected}}"></d-calendar>
       <d-calendar selected-date="{{selectedDate}}" header class="light-theme" language="ru"></d-calendar>
       <d-calendar selected-date="{{selectedDate}}" language="eo"></d-calendar>
@@ -85,7 +86,6 @@
       
       //Polymer dom-change event
       var t = document.querySelector('#t');
-      
       t.addEventListner('dom-change',function(){
          //auto-binding template is ready 
       });

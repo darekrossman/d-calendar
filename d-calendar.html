@@ -1,6 +1,5 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-meta/iron-meta.html"/>
-<link rel="import" href="../iron-style/iron-style.html"/>
 <link rel="import" href="../iron-media-query/iron-media-query.html"/>
 <link rel="import" href="../iron-pages/iron-pages.html"/>
 <link rel="import" href="../paper-icon-button/paper-icon-button.html"/>
@@ -33,10 +32,221 @@ Fired when an item element is tapped.
 
 
 <dom-module id="d-calendar" touch-action="auto">
+    
+    <style>
+        :host {
+            user-select: none;
+            -webkit-user-select: none;
+            font-family: RobotoDraft;
+            font-size: 12px;
+            line-height: 24px;
+            background: {{g.dCalendar.bgColor}};
+            color: #FFF;
+          }
+          :host(.light-theme) {
+            background: #FFF;
+            color: #111;
+          }
+          :host * {
+           cursor: default;
+          }
+
+          #selectedWeekdayHeader {
+            color: #FFF;
+            height: 36px;
+            background: {{g.dCalendar.accentColor}};
+            overflow: hidden;
+            -webkit-transition: all .3s;
+            transition: all .3s;
+          }
+
+          .selectedWeekday {
+            font-size: 14px;
+            line-height: 36px;
+            text-align: center;
+            margin: 0;
+            font-weight: 400;
+          }
+
+          #selectedDateHeader {
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.05);
+            color: #FFF;
+            padding: 12px 0;
+            -webkit-transition: all .3s;
+            transition: all .3s;
+          }
+          :host(.light-theme) #selectedDateHeader {
+            background: {{scaleColor(g.dCalendar.accentColor, 10)}};
+          }
+          #wrapper[horizontal] #selectedDateHeader {
+            height: 264px;
+          }
+
+          #selectedDateHeader > div {
+            width: 100%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+          }
+          .selectedWeekday {
+            font-size: 14px;
+            line-height: 36px;
+            text-align: center;
+            margin: 0;
+            font-weight: 400;
+          }
+
+          #selectedMonth,
+          #selectedYear {
+            height: 30px;
+          }
+          #selectedDay {
+            height: 60px;
+          }
+          .selectedMonth,
+          .selectedYear {
+            font-size: 22px;
+            font-weight: 400;
+            line-height: 30px;
+            letter-spacing: 0.05em;
+          }
+          .selectedDay {
+            font-size: 60px;
+            line-height: 60px;
+          }
+          .selectedYear {
+            color: rgba(255, 255, 255, 0.6);
+          }
+
+
+          #wrapper[horizontal] #selectedMonth,
+          #wrapper[horizontal] #selectedYear {
+            height: 50px;
+          }
+          #wrapper[horizontal] #selectedDay {
+            height: 90px;
+          }
+          #wrapper[horizontal] .selectedMonth,
+          #wrapper[horizontal] .selectedYear {
+            font-size: 24px;
+            font-weight: 400;
+            line-height: 50px;
+            letter-spacing: 0.05em;
+          }
+          #wrapper[horizontal] .selectedDay {
+            font-size: 86px;
+            line-height: 90px;
+          }
+
+          #calendar {
+
+          }
+
+          #header {
+            position: relative;
+            overflow: hidden;
+            padding: 0 9px;
+            margin-bottom: 0px;
+          }
+          #header paper-icon-button {
+            margin: 4px 0;
+            transition: all .1s;
+          }
+          #header paper-icon-button:active {
+            color: {{g.dCalendar.accentColor}};
+          }
+
+          #viewingMonthYear {
+            overflow: hidden;
+          }
+          .viewingMonthYear {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 48px;
+            letter-spacing: 0.02em;
+            text-align: center;
+          }
+
+          .weekday-name {
+            font-weight: 500;
+            width: 36px;
+            text-align: center;
+            color: rgba(255,255,255,0.2);
+          }
+          :host(.light-theme) .weekday-name{
+            color: rgba(0,0,0,0.3);
+          }
+
+          #views {
+            height: 300px;
+            width: 276px;
+            overflow: hidden;
+          }
+          #calendar-selection {
+            width: 276px;
+          }
+
+          .weekday {
+            margin: 0 12px;
+          }
+
+          .slideup,
+          ::shadow .slideup {
+            transition: all .4s cubic-bezier(0.390, 0.575, 0.135, 0.995);
+            -webkit-transition: all .4s cubic-bezier(0.390, 0.575, 0.135, 0.995);
+            position: absolute;
+            -webkit-transform: translateY(100%);
+            transform: translateY(100%);
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            opacity: 0;
+            z-index: 0;
+          }
+          .slideup.in,
+          ::shadow .slideup.in {
+            -webkit-transform: translateY(0px);
+            transform: translateY(0px);
+            z-index: 1;
+            opacity: 0.9;
+          }
+          .slideup.out,
+          ::shadow .slideup.out {
+            -webkit-transform: translateY(-100%);
+            transform: translateY(-100%);
+            z-index: 0;
+            opacity: 0;
+          }
+
+          .slideleft,
+          ::shadow .slideleft {
+            transition: all .3s cubic-bezier(0.390, 0.575, 0.135, 0.995);
+            -webkit-transition: all .3s cubic-bezier(0.390, 0.575, 0.135, 0.995);
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            -webkit-transform: translateX(100%);
+            transform: translateX(100%);
+          }
+          .slideleft.in,
+          ::shadow .slideleft.in {
+            -webkit-transform: translateX(0);
+            transform: translateX(0);
+          }
+          .slideleft.out,
+          ::shadow .slideleft.out {
+            -webkit-transform: translateX(-100%);
+            transform: translateX(-100%);
+          }
+    </style>
+       
+    
 
   <template id="template">
-
-    <iron-style ref="d-calendar-theme"></iron-style>
 
     <iron-media-query query="max-height: 360px" queryMatches="{{landscape}}"></iron-media-query>
 
@@ -45,13 +255,13 @@ Fired when an item element is tapped.
     <div id="wrapper" layout horizontal?="{{landscape}}" vertical?="{{!landscape}}">
 
       <div id="calendar-selection" hidden?="{{ !header }}">
-        <div id="selectedWeekdayHeader" layout horizontal>
+        <div id="selectedWeekdayHeader" class="horizontal layout">
           <div relative flex id="selectedWeekday">
             <div class="selectedWeekday slideup animate">{{selectedWeekday}}</div>
           </div>
         </div>
 
-        <div id="selectedDateHeader" layout vertical center center-justified>
+        <div id="selectedDateHeader" class="vertical center-justified layout">
           <div id="selectedMonth">
             <div class="selectedMonth slideup animate" style="text-transform: uppercase">{{selectedMonth}}</div>
           </div>

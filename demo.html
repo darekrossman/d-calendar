@@ -59,14 +59,14 @@
   </style>
 </head>
 
-<body unresolved class="fullbleed layout vertical center center-justified">
+<body unresolved class="fullbleed vertical center center-justified layout">
 
   <template id="sandbox" is="dom-bind">
       
     <div layout horizontal center center-justified>
-      <d-calendar selectedDate="{{selectedDate}}" date="{{date}}" class="light-theme" on-d-calendar-date-selected="{{dateSelected}}"></d-calendar>
-      <d-calendar selectedDate="{{selectedDate}}" header class="light-theme" language="ru"></d-calendar>
-      <d-calendar selectedDate="{{selectedDate}}" language="eo"></d-calendar>
+      <d-calendar selected-date="{{selectedDate}}" date="{{date}}" class="light-theme" on-d-calendar-date-selected="{{dateSelected}}"></d-calendar>
+      <d-calendar selected-date="{{selectedDate}}" header class="light-theme" language="ru"></d-calendar>
+      <d-calendar selected-date="{{selectedDate}}" language="eo"></d-calendar>
     </div>
 
     <div id="dateDisplay">

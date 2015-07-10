@@ -12,4 +12,6 @@ npm install
 npm start
 ```
 
-Unfortunately I'm not able to maintain this project - hopefully someone will fork it and make it even more awesome!
+#Goal
+
+Update d-calendar to Polymer 1.0

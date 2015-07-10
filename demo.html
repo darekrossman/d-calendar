@@ -3,8 +3,11 @@
 <head>
   <meta name="viewport" content="width=device-width, user-scalable=no">
   <title>d-calendar Demo</title>
+  
+  <script src="../webcomponentsjs/webcomponents-lite.js"></script>
+  
   <link rel="import" href="../paper-input/paper-input.html">
-  <link rel="import" href="../polymer-filters/polymer-filters.html">
+<!--  <link rel="import" href="../polymer-filters/polymer-filters.html">-->
   <link rel="import" href="d-calendar.html">
 
   <style>
@@ -56,10 +59,10 @@
   </style>
 </head>
 
-<body unresolved fullbleed layout vertical center center-justified>
+<body unresolved class="fullbleed layout vertical center center-justified">
 
-  <template id="sandbox" is="auto-binding">
-
+  <template id="sandbox" is="dom-bind">
+      
     <div layout horizontal center center-justified>
       <d-calendar selectedDate="{{selectedDate}}" date="{{date}}" class="light-theme" on-d-calendar-date-selected="{{dateSelected}}"></d-calendar>
       <d-calendar selectedDate="{{selectedDate}}" header class="light-theme" language="ru"></d-calendar>
@@ -67,18 +70,27 @@
     </div>
 
     <div id="dateDisplay">
-      <input id="dateinput" placeholder="Selected Date" value="{{ selectedDate }}"></input>
+      <input id="dateinput" placeholder="Selected Date" value="{{selectedDate}}"></input>
     </div>
 
     <div class="swatch-bar">
-      <template repeat="{{color in colors}}">
-        <div class="swatch" on-tap="{{selectColor}}" data-color="{{color}}" style="background-color: {{color}}"></div>
+      <template id="t" is="dom-repeat" items="{{colors}}">                              <!--style$={{'bla bla'}}-->
+        <div class="swatch" on-tap="{{item.selectColor}}" data-color="{{item.color}}" style="background-color: {{item.color}}"></div>
       </template>
     </div>
 
   </template>
 
   <script>
+      
+      //Polymer dom-change event
+      var t = document.querySelector('#t');
+      
+      t.addEventListner('dom-change',function(){
+         //auto-binding template is ready 
+      });
+      
+      
   window.addEventListener('template-bound', function(){
     var sandbox = document.getElementById('sandbox');
 
@@ -112,7 +124,7 @@
     }
 
     sandbox.selectedColor = '#2196F3';
-  })
+  });
   </script>
 
 </body>

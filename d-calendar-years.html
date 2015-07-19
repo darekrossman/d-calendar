@@ -4,14 +4,43 @@
 <link rel="import" href="d-date-utils.html"/>
 
 <dom-module id="d-calendar-years">
+   
+    <style>
+        #years {
+            box-sizing: border-box;
+            height: 300px;
+            max-width: 100%;
+            padding: 6px;
+            overflow: auto;
+          }
+          .year {
+            width: 33.3%;
+            text-align: center;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 36px;
+          }
+          .year paper-button {
+            display: block;
+            width: 100%;
+            margin: 0;
+          }
+          paper-button::shadow #ripple {
+            //color: {{g.dCalendar.accentColor}};
+            color: #f44336;
+          }
+        
+    </style>
+    
+    
   <template>
-    <iron-style ref="d-calendar-theme-years"></iron-style>
+<!--    <iron-style ref="d-calendar-theme-years"></iron-style>-->
     <d-date-utils id="dateUtils"></d-date-utils>
 
-    <div id="years" layout horizontal wrap>
-      <template repeat="{{year, i in yearsArray}}">
-        <div class="year" layout horizontal center center-justified hero?="{{i + startYear == viewingYear}}" hero-id="poo">
-          <paper-button data-year="{{i + startYear}}" on-tap="{{yearSelected}}" recenteringTouch>{{i + startYear}}</paper-button>
+    <div id="years" class= "horizontal layout wrap">
+      <template is="dom-repeat" items="{{yearsArray}}" >
+        <div class="year horizontal center-justified layout"   hero?="{{compareStartViewing()}}" hero-id="poo">
+          <paper-button data-year="{{addYear(item.year)}}" on-tap="yearSelected" recenteringTouch>{{addYear(item.year)}}</paper-button>
         </div>
       </template>
     </div>
@@ -20,7 +49,7 @@
 </dom-module>
 
 <script>
-(function(){
+
 
   Polymer({
     is: 'd-calendar-years',
@@ -32,6 +61,7 @@
     },
 
     ready: function(){
+    
       var now = this.viewingYear || new Date().getFullYear();
       this.startYear = this.startYear || now - 2;
       this.years = this.years || 15;
@@ -41,9 +71,27 @@
       this.yearsArray = Array(this.years);
     },
 
-    yearSelected: function(e, detail, sender) {
-      this.fire('d-calendar-year-selected', {year: sender.dataset.year });
+    yearSelected: function(e, detail) {
+      this.fire('d-calendar-year-selected', {year: detail.sourceEvent.explicitOriginalTarget.year });
+    },
+    
+    
+    addYear: function(year){
+        console.log("IM IN"); 
+        return this.startYear+year;
+    },
+    
+    compareStartViewing: function(){
+        
+        if(this.startYear === this.viewingYear){
+            return true;
+        }else{
+            return false;
+        }
+        
     }
+    
+    
   });
-})();
+
 </script>

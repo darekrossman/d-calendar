@@ -47,7 +47,6 @@ Fired when selecting a specific day of the month.
 </dom-module>
 
 <script>
-(function(){
 
   Polymer({
     is: 'd-calendar-weeks',
@@ -103,7 +102,5 @@ Fired when selecting a specific day of the month.
     selectDay: function(e, detail, sender) {
       this.fire('d-calendar-date-selected', {date: sender.getAttribute('date')});
     }
-  })
-
-})()
+  });
 </script>

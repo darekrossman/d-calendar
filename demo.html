@@ -11,7 +11,7 @@
 <!--  <link rel="import" href="../polymer-filters/polymer-filters.html">-->
   <link rel="import" href="d-calendar.html">
 
-  <style>
+  <style is="custom-style">
     body {
       font-family: RobotoDraft;
       -webkit-font-smoothing: antialiased; background: #DDD;
@@ -65,9 +65,9 @@
   <template id="sandbox" is="dom-bind">
       
     <div class="horizontal center center-justified layout">
-      <d-calendar selected-date="{{selectedDate}}" date="{{date}}" class="light-theme" on-d-calendar-date-selected="{{dateSelected}}"></d-calendar>
-      <d-calendar selected-date="{{selectedDate}}" header class="light-theme" language="ru"></d-calendar>
-      <d-calendar selected-date="{{selectedDate}}" language="eo"></d-calendar>
+      <d-calendar selected-date="{{selectedDate}}" date="{{date}}" class="light-theme" on-d-calendar-date-selected="dateSelected"></d-calendar>
+<!--      <d-calendar selected-date="{{selectedDate}}" header class="light-theme" language="ru"></d-calendar>
+      <d-calendar selected-date="{{selectedDate}}" language="eo"></d-calendar>-->
     </div>
 
     <div id="dateDisplay">
@@ -76,20 +76,26 @@
 
     <div class="swatch-bar">
       <template is="dom-repeat" items="{{colors}}">   
-        <div class="swatch" on-tap="{{item.selectColor}}" data-color="{{item.color}}" style$="{{item.background}}"></div>
+        <div class="swatch" on-tap="selectColor" data-color="{{item.color}}" style$="{{item.background}}"></div>
       </template>
     </div>
-
   </template>
 
   <script>
     
-    //TO DO: write comments
     
     var sandbox = document.querySelector('#sandbox');
-    
+    //Auto-Binding Event
     sandbox.addEventListener('dom-change',function(){
     
+//     sandbox.dateSelected = function(ev, detail, sender){
+//        this.updateDateInputValue();
+//        
+//    };
+//    
+//    sandbox.updateDateInputValue = function(){
+//        //sandbox.$.dateinput.value=PolymerExpressions.prototype.date(this.selectedDate);
+//    };
     
     sandbox.colors = [
         {color: '#f44336', background: 'background-color:#f44336'},
@@ -115,12 +121,18 @@
       console.log("Date selected: ", ev.detail);
     };
 
-    sandbox.selectColor = function(ev, detail, sender) {
-      sandbox.selectedColor = sender.dataset.color;
-      //CoreStyle.g.dCalendar.accentColor = sandbox.selectedColor;
+    sandbox.selectColor = function(ev, detail) {
+      console.log("Color selected");
+      console.log(detail.sourceEvent.explicitOriginalTarget.dataColor);
+      //sender is not availible in 1.0
+      sandbox.selectedColor = detail.sourceEvent.explicitOriginalTarget.dataColor;
+      CoreStyle.g.dCalendar.accentColor =  sandbox.selectedColor;
     };
 
     sandbox.selectedColor = '#2196F3';
+    
+    //sandbox.updateDateInputValue();
+    
   });
   </script>
 

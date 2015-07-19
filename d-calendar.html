@@ -33,14 +33,15 @@ Fired when an item element is tapped.
 
 <dom-module id="d-calendar" touch-action="auto">
     
-    <style>
+    <style> 
         :host {
             user-select: none;
             -webkit-user-select: none;
             font-family: RobotoDraft;
             font-size: 12px;
             line-height: 24px;
-            background: {{g.dCalendar.bgColor}};
+            //background: {{g.dCalendar.bgColor}};
+            background: #f44336;
             color: #FFF;
           }
           :host(.light-theme) {
@@ -54,7 +55,8 @@ Fired when an item element is tapped.
           #selectedWeekdayHeader {
             color: #FFF;
             height: 36px;
-            background: {{g.dCalendar.accentColor}};
+            //background: {{g.dCalendar.accentColor}};
+            background: #f44336;
             overflow: hidden;
             -webkit-transition: all .3s;
             transition: all .3s;
@@ -77,7 +79,8 @@ Fired when an item element is tapped.
             transition: all .3s;
           }
           :host(.light-theme) #selectedDateHeader {
-            background: {{scaleColor(g.dCalendar.accentColor, 10)}};
+            //background: {{scaleColor(g.dCalendar.accentColor, 10)}};
+            background: #f44336;
           }
           #wrapper[horizontal] #selectedDateHeader {
             height: 264px;
@@ -154,7 +157,8 @@ Fired when an item element is tapped.
             transition: all .1s;
           }
           #header paper-icon-button:active {
-            color: {{g.dCalendar.accentColor}};
+            //color: {{g.dCalendar.accentColor}};
+            color: #f44336;
           }
 
           #viewingMonthYear {
@@ -248,13 +252,14 @@ Fired when an item element is tapped.
 
   <template>
       
-    <iron-media-query query="max-height: 360px" queryMatches="{{landscape}}"></iron-media-query>
+    <iron-media-query query="max-height: 360px" query-matches="{{landscape}}"></iron-media-query>
 
     <d-date-utils id="dateUtils"></d-date-utils>
 
     <div id="wrapper" layout horizontal?="{{landscape}}" vertical?="{{!landscape}}">
        
       <div id="calendar-selection" hidden?="{{ !header }}">
+          
         <div id="selectedWeekdayHeader" class="horizontal layout">
           <div relative flex id="selectedWeekday">
             <div class="selectedWeekday slideup animate">{{selectedWeekday}}</div>
@@ -266,6 +271,7 @@ Fired when an item element is tapped.
             <div class="selectedMonth slideup animate" style="text-transform: uppercase">{{selectedMonth}}</div>
           </div>
           <div id="selectedDay">
+              
             <div class="selectedDay slideup animate" view="dateView" on-tap="{{viewSelectAction}}">{{selectedDay}}</div>
           </div>
           <div id="selectedYear">
@@ -275,8 +281,7 @@ Fired when an item element is tapped.
       </div>
 
       <div id="calendar" class="vertical layout" on-trackx="trackx" on-trackstart="trackstart" on-trackend="trackend">
-
-        <iron-pages id="views" selected="{{selectedView}}" transitions="slide-up hero-transition cross-fade-delayed cross-fade">
+        <iron-pages id="views" selected="0" transitions="slide-up hero-transition cross-fade-delayed cross-fade">
           <section name="dateView">
             <div cross-fade>
               <div id="header" class="horizontal layout">
@@ -287,15 +292,15 @@ Fired when an item element is tapped.
                 <paper-icon-button icon="chevron-right" on-tap="{{nextAction}}" noink></paper-icon-button>
               </div>
 
-              <div class="weekday horizontal layout center">
-                <template repeat="{{weekday in weekdays}}">
-                  <div class="weekday-name">{{weekday}}</div>
+              <div class="weekday horizontal center layout ">
+                <template is="dom-repeat" items="{{weekdays}}">
+                  <div class="weekday-name">{{item.dayname}}</div>
                 </template>
               </div>
               <d-calendar-weeks
                 date="{{viewingDate}}"
                 selectedDate="{{selectedDate}}"
-                on-d-calendar-date-selected="{{dateSelectAction}}">
+                on-d-calendar-date-selected="dateSelectAction">
               </d-calendar-weeks>
             </div>
           </section>
@@ -303,7 +308,7 @@ Fired when an item element is tapped.
           <section name="yearView">
             <div cross-fade>
               <d-calendar-years
-                on-d-calendar-year-selected="{{yearSelectAction}}"
+                on-d-calendar-year-selected="yearSelectAction"
                 viewingYear="{{viewingYear}}">
               </d-calendar-years>
             </div>
@@ -316,9 +321,9 @@ Fired when an item element is tapped.
 </dom-module>
 
 <script>
-(function(){
 
-  var prototype = {
+
+  Polymer({
     is: 'd-calendar',
 
     properties: {
@@ -371,6 +376,16 @@ Fired when an item element is tapped.
       header: {
         type: Boolean,
         value: false
+      },
+      
+      fields: {
+          type: Array,
+          value: [
+            'selectedWeekday',
+            'selectedDay',
+            'selectedMonth',
+            'selectedYear',
+            'viewingMonthYear']
       }
     },
 
@@ -417,14 +432,14 @@ Fired when an item element is tapped.
           ],
 
           shortDayNames: [
-              'S',
-              'M',
-              'T',
-              'W',
-              'T',
-              'F',
-              'S'
-          ],
+              {dayname:'S'},
+              {dayname:'M'},
+              {dayname:'T'},
+              {dayname:'W'},
+              {dayname:'T'},
+              {dayname:'F'},
+              {dayname:'S'}
+          ]
       },
       'eo': {
           monthNames: [
@@ -599,19 +614,24 @@ Fired when an item element is tapped.
     },
 
     ready: function() {
-
       this.dateUtils = this.$.dateUtils;
-
+      
       if (!this.selectedDate) {
         this.selectedDate = new Date();
       } else {
         this.selectedDate = new Date(this.selectedDate);
       }
-
       this.weekdays = this.getShortDayNames();
       this.viewingDate = this.viewingDate || new Date(this.selectedDate);
       this.viewingDate.setDate(1);
       this.nowDate = new Date();
+
+      //TEST RENDER!
+//      for(i=0; i<this.fields.length;i++){
+//          var temp = this.querySelector('.'+this.fields[i]);
+//          this.renderNode(temp);
+//      }
+      
 
       this.addEventListener('keyup', this.keyup.bind(this));
     },
@@ -700,7 +720,8 @@ Fired when an item element is tapped.
       el._originalTransition = element.style.transition;
       el.style.transition = 'none';
       el.parentElement.appendChild(elClone);
-
+      
+     
       if (!this.reverseAnimation) {
         el.classList.remove('in') // back to start position immediately
       } else {
@@ -716,8 +737,7 @@ Fired when an item element is tapped.
           el.classList.remove('out'); // animate to start position
         }
         el.classList.add('in');
-      });
-
+      }),
       this.async(function(){
         try {
           el.parentNode.removeChild(elClone);
@@ -754,26 +774,25 @@ Fired when an item element is tapped.
       }
     }
 
-  };
 
-  // Set up the values we want to watch and assign the change callback,
-  // so that we can animate the nodes bound to them.
-  var fields = [
-    'selectedWeekday',
-    'selectedDay',
-    'selectedMonth',
-    'selectedYear',
-    'viewingMonthYear'
-  ]
+  });
 
-  fields.forEach(function(field){
-    prototype[field + 'Changed'] = function(oldval, newval) {
-      var el = this.shadowRoot.querySelector('.' + field);
-      if (el) this.renderNode(el);
-    }
-  })
+    // Set up the values we want to watch and assign the change callback,
+    // so that we can animate the nodes bound to them.
+//    var fields = [
+//      'selectedWeekday',
+//      'selectedDay',
+//      'selectedMonth',
+//      'selectedYear',
+//      'viewingMonthYear'
+//    ];
+//
+//    fields.forEach(function(field){
+//      prototype[field + 'Changed'] = function(oldval, newval) {
+//        var el = this.shadowRoot.querySelector('.' + field);
+//        if (el) this.renderNode(el);
+//      }
+//    });
 
-  Polymer(prototype);
-
-})()
+ 
 </script>

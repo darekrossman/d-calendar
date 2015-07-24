@@ -3,6 +3,7 @@
 <link rel="import" href="../iron-media-query/iron-media-query.html"/>
 <link rel="import" href="../iron-pages/iron-pages.html"/>
 <link rel="import" href="../paper-icon-button/paper-icon-button.html"/>
+<link rel="import" href="../iron-icons/iron-icons.html"/>
 <link rel="import" href="d-calendar-theme.html"/>
 <link rel="import" href="d-calendar-weeks.html"/>
 <link rel="import" href="d-calendar-years.html"/>
@@ -28,6 +29,11 @@ Fired when an item element is tapped.
 @event iron-activate
 @param {Object} detail
   @param {Object} detail.item the item element
+-->
+
+<!--
+dateView = 0
+yearView = 1
 -->
 
 
@@ -78,10 +84,10 @@ Fired when an item element is tapped.
             -webkit-transition: all .3s;
             transition: all .3s;
           }
-          :host(.light-theme) #selectedDateHeader {
+/*          :host(.light-theme) #selectedDateHeader {
             //background: {{scaleColor(g.dCalendar.accentColor, 10)}};
             background: #f44336;
-          }
+          }*/
           #wrapper[horizontal] #selectedDateHeader {
             height: 264px;
           }
@@ -179,9 +185,9 @@ Fired when an item element is tapped.
             text-align: center;
             color: rgba(255,255,255,0.2);
           }
-          :host(.light-theme) .weekday-name{
+/*          :host(.light-theme) .weekday-name{
             color: rgba(0,0,0,0.3);
-          }
+          }*/
 
           #views {
             height: 300px;
@@ -272,24 +278,24 @@ Fired when an item element is tapped.
           </div>
           <div id="selectedDay">
               
-            <div class="selectedDay slideup animate" view="dateView" on-tap="{{viewSelectAction}}">{{selectedDay}}</div>
+            <div class="selectedDay slideup animate" view="0" on-tap=viewSelectAction>{{selectedDay}}</div>
           </div>
           <div id="selectedYear">
-            <div class="selectedYear slideup animate" view="yearView" on-tap="{{viewSelectAction}}">{{selectedYear}}</div>
+            <div class="selectedYear slideup animate" view="1" on-tap=viewSelectAction>{{selectedYear}}</div>
           </div>
         </div>
       </div>
 
       <div id="calendar" class="vertical layout" on-trackx="trackx" on-trackstart="trackstart" on-trackend="trackend">
-        <iron-pages id="views" selected="0" transitions="slide-up hero-transition cross-fade-delayed cross-fade">
+        <iron-pages id="views" selected$="{{selectedView}}" transitions="slide-up hero-transition cross-fade-delayed cross-fade">
           <section name="dateView">
             <div cross-fade>
               <div id="header" class="horizontal layout">
-                <paper-icon-button icon="chevron-left" on-tap="{{prevAction}}" noink></paper-icon-button>
+                <paper-icon-button icon="chevron-left" on-tap="prevAction" noink></paper-icon-button>
                 <div flex relative id="viewingMonthYear">
-                  <h4 class="viewingMonthYear slideleft animate">{{viewingMonth}} <span view="yearView" on-tap="{{viewSelectAction}}" hero hero-id="poo">{{viewingYear}}</span></h4>
+                    <h4 class="viewingMonthYear slideleft animate"><span>{{viewingMonth}}</span> <span view="1" on-tap=viewSelectAction hero hero-id="poo">{{viewingYear}}</span></h4>
                 </div>
-                <paper-icon-button icon="chevron-right" on-tap="{{nextAction}}" noink></paper-icon-button>
+                <paper-icon-button icon="chevron-right" on-tap="nextAction" noink></paper-icon-button>
               </div>
 
               <div class="weekday horizontal center layout ">
@@ -299,7 +305,7 @@ Fired when an item element is tapped.
               </div>
               <d-calendar-weeks
                 date="{{viewingDate}}"
-                selectedDate="{{selectedDate}}"
+                selected-date="{{selectedDate}}"
                 on-d-calendar-date-selected="dateSelectAction">
               </d-calendar-weeks>
             </div>
@@ -309,7 +315,7 @@ Fired when an item element is tapped.
             <div cross-fade>
               <d-calendar-years
                 on-d-calendar-year-selected="yearSelectAction"
-                viewingYear="{{viewingYear}}">
+                viewing-year="{{viewingYear}}">
               </d-calendar-years>
             </div>
           </section>
@@ -351,6 +357,12 @@ Fired when an item element is tapped.
         type: Date,
         notify: true
       },
+      
+      //selected View for iron-pages 0= dateView, 1 = yearView
+      selectedView:{
+          type: String,
+          value: '0'
+      },
 
       date: Date,
 
@@ -362,7 +374,7 @@ Fired when an item element is tapped.
        * @default 'en'
        */
       language: {
-        type: String,
+        type: Date,
         value: 'en'
       },
 
@@ -614,6 +626,7 @@ Fired when an item element is tapped.
     },
 
     ready: function() {
+      
       this.dateUtils = this.$.dateUtils;
       
       if (!this.selectedDate) {
@@ -625,7 +638,12 @@ Fired when an item element is tapped.
       this.viewingDate = this.viewingDate || new Date(this.selectedDate);
       this.viewingDate.setDate(1);
       this.nowDate = new Date();
-
+      
+      //set variables with data (work in progress)
+      this.updateSelectedDateProps();
+      this.updateViewingDateProps();
+      
+      
       //TEST RENDER!
 //      for(i=0; i<this.fields.length;i++){
 //          var temp = this.querySelector('.'+this.fields[i]);
@@ -651,12 +669,12 @@ Fired when an item element is tapped.
       this.date = this.selectedDate;
 
       this.focus();
-      this.fire('d-calendar-date-selected', {date: this.selectedDate})
+      this.fire('d-calendar-date-selected', {date: this.selectedDate});
     },
 
     viewingDateChanged: function(olddate, newdate) {
       this.reverseAnimation = olddate && olddate.getTime() > newdate.getTime();
-      this.async(this.updateViewingDateProps)
+      this.async(this.updateViewingDateProps);
     },
 
     dateChanged: function(olddate, newdate) {
@@ -682,30 +700,35 @@ Fired when an item element is tapped.
       this.viewingYear = this.viewingDate.getFullYear();
       this.viewingMonthYear = this.viewingMonth + ' ' + this.viewingYear;
     },
-
+    
+    //Change month +1
     nextAction: function() {
       this.viewingDate = this.dateUtils.addMonths(this.viewingDate, 1);
     },
-
+    //change month -1
     prevAction: function() {
       this.viewingDate = this.dateUtils.addMonths(this.viewingDate, -1);
     },
-
-    viewSelectAction: function(ev, detail, sender) {
-      this.selectedView = (sender.getAttribute('view'));
+    
+    //Change View between dateView = 0 and yearView=1
+    viewSelectAction: function(ev, detail) {
+      
+      this.selectedView = (detail.sourceEvent.originalTarget.attributes.view.nodeValue);
     },
 
-    dateSelectAction: function(ev, detail, sender) {
+    dateSelectAction: function(ev, detail) {
       this.selectedDate = new Date(ev.detail.date);
     },
 
-    yearSelectAction: function(ev, detail, sender) {
+    yearSelectAction: function(ev, detail) {
+        
       var year = ev.detail.year;
-
       this.disablePropertyAnimations = true;
       this.viewingDate = new Date(year, this.viewingDate.getMonth(), 1);
       this.async(function(){
-        this.$.views.selected = 'dateView';
+        //change to dateView ('0' = dateView, '1'=yearView) 
+        this.selectedView='0';
+        //this.$.views.selected = '0';
         this.disablePropertyAnimations = false;
       }, null, 280);
     },
@@ -750,10 +773,10 @@ Fired when an item element is tapped.
       var month = this.selectedDate.getMonth();
       switch (e.keyCode) {
         case 37:
-          this.prevAction()
+          this.prevAction();
           break;
         case 39:
-          this.nextAction()
+          this.nextAction();
           break;
       }
     },

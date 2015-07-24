@@ -10,7 +10,7 @@
   <link rel="import" href="../polymer/polymer.html">
 <!--  <link rel="import" href="../polymer-filters/polymer-filters.html">-->
   <link rel="import" href="d-calendar.html">
-
+<link rel="import" href="d-date-utils.html"/>
   <style is="custom-style">
     body {
       font-family: RobotoDraft;
@@ -63,6 +63,9 @@
 <body unresolved class="fullbleed vertical center center-justified layout">
 
   <template id="sandbox" is="dom-bind">
+     <!--Needed to update and format selected Date-->
+      <d-date-utils id="dateUtils"></d-date-utils>
+      
       
     <div class="horizontal center center-justified layout">
       <d-calendar selected-date="{{selectedDate}}" date="{{date}}" class="light-theme" on-d-calendar-date-selected="dateSelected"></d-calendar>
@@ -73,6 +76,7 @@
     <div id="dateDisplay">
       <input id="dateinput" placeholder="Selected Date" value="{{selectedDate}}"></input>
     </div>
+
 
     <div class="swatch-bar">
       <template is="dom-repeat" items="{{colors}}">   
@@ -87,15 +91,20 @@
     var sandbox = document.querySelector('#sandbox');
     //Auto-Binding Event
     sandbox.addEventListener('dom-change',function(){
+   
+    //triggers if new date selected
+     sandbox.dateSelected = function(ev, detail){
+        this.updateDateInputValue();
+    };
     
-//     sandbox.dateSelected = function(ev, detail, sender){
-//        this.updateDateInputValue();
-//        
-//    };
-//    
-//    sandbox.updateDateInputValue = function(){
-//        //sandbox.$.dateinput.value=PolymerExpressions.prototype.date(this.selectedDate);
-//    };
+    //update shown date in demo with the right format
+    sandbox.updateDateInputValue = function(){
+        
+        //sandbox.$.dateinput.value=PolymerExpressions.prototype.date(this.selectedDate);
+        
+        //update selected date with right format
+        sandbox.$.dateinput.value = sandbox.$.dateUtils.formatDate(this.selectedDate,'dd.MM.yyyy');
+    };
     
     sandbox.colors = [
         {color: '#f44336', background: 'background-color:#f44336'},
@@ -117,9 +126,6 @@
         {color: '#607D8B', background: 'background-color:#607D8B'}
     ];
 
-    sandbox.dateSelected = function(ev) {
-      console.log("Date selected: ", ev.detail);
-    };
 
     sandbox.selectColor = function(ev, detail) {
       console.log("Color selected");
@@ -131,7 +137,7 @@
 
     sandbox.selectedColor = '#2196F3';
     
-    //sandbox.updateDateInputValue();
+    sandbox.updateDateInputValue();
     
   });
   </script>

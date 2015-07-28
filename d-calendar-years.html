@@ -1,6 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-button/paper-button.html"/>
-<link rel="import" href="d-calendar-theme.html"/>
+<!--<link rel="import" href="d-calendar-theme.html"/>-->
 <link rel="import" href="d-date-utils.html"/>
 
 <dom-module id="d-calendar-years">
@@ -27,20 +27,18 @@
           }
           paper-button::shadow #ripple {
             //color: {{g.dCalendar.accentColor}};
-            color: #f44336;
+            color: #2196F3;
           }
         
     </style>
     
-    
   <template>
-<!--    <iron-style ref="d-calendar-theme-years"></iron-style>-->
     <d-date-utils id="dateUtils"></d-date-utils>
 
     <div id="years" class= "horizontal layout wrap">
       <template is="dom-repeat" items="{{yearsArray}}">
-        <div class="year horizontal center-justified layout"   hero?="{{compareStartViewing()}}" hero-id="poo">
-          <paper-button data-year="{{incYear(item.year)}}" on-tap="yearSelected" recenteringTouch>{{incYear(item.year)}}</paper-button>
+        <div class="year horizontal center-justified layout" hero?="{{compareStartViewing(item.year)}}" hero-id="poo">
+          <paper-button data-year="{{item.year}}" on-tap="yearSelected" recenteringTouch>{{item.year}}</paper-button>
         </div>
       </template>
     </div>
@@ -59,14 +57,18 @@
           type: Number,
           value: null
       },
+      //number of years displayed on the grid
       years:{
           type: Number,
-          value: null
+          value: null,
+          notify:true,
+          observer: "calculateYears"
           
       },
+      //array with years, displayed on the grid
       yearsArray: {
           type: Array,
-          value: function() {return[];}
+          value: []
       },
       viewingYear:{
           type: Date,
@@ -79,31 +81,43 @@
       var now = this.viewingYear || new Date().getFullYear();
       this.startYear = this.startYear || now - 2;
       this.years = this.years || 15;
-      this.yearsArray =[{year: 15},{year:16},{year:17}];
-      //this.yearsArray.push({year: this.years});
-      //console.log(this.yearsArray);
-     
+      
     },
     
 
-    yearsChanged: function() {
-      this.yearsArray = Array(this.years);
+    //calculate years depending on startYear and yearsArray
+    calculateYears : function(newval,oldval){
+        var temp=[];
+        var calcYear;
+        if(newval===null){
+            return;
+        }
+        
+        for (i=1; i<=newval; i++){
+            calcYear = i + this.startYear;
+            temp.push({year: calcYear});
+        }
+        this.yearsArray = temp;
     },
     
     //Fire selected year to "d-calendar-year-selected"
     yearSelected: function(e, detail) {
       console.log(detail);
-      this.fire('d-calendar-year-selected', {year: detail.sourceEvent.explicitOriginalTarget.data });
+      this.fire('d-calendar-year-selected', {year: detail.sourceEvent.target.innerHTML });
     },
     
-    //increase year
+    //calculate Years depending on startYear and yearsArray
     incYear: function(year){
         return this.startYear+year;
     },
     
-    compareStartViewing: function(){
-        
-        if(this.startYear === this.viewingYear){
+    /**
+     * compares start and viewingYear and returns true if it matches
+     * @param String year
+     * @returns Boolean
+     */
+    compareStartViewing: function(year){
+        if((year + this.startYear) === this.viewingYear){
             return true;
         }else{
             return false;

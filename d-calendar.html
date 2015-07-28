@@ -4,7 +4,7 @@
 <link rel="import" href="../iron-pages/iron-pages.html"/>
 <link rel="import" href="../paper-icon-button/paper-icon-button.html"/>
 <link rel="import" href="../iron-icons/iron-icons.html"/>
-<link rel="import" href="d-calendar-theme.html"/>
+<!--<link rel="import" href="d-calendar-theme.html"/>-->
 <link rel="import" href="d-calendar-weeks.html"/>
 <link rel="import" href="d-calendar-years.html"/>
 <link rel="import" href="d-date-utils.html"/>
@@ -38,16 +38,16 @@ yearView = 1
 
 
 <dom-module id="d-calendar" touch-action="auto">
-    
+   <template>
     <style> 
-        :host {
+        d-calendar {
             user-select: none;
             -webkit-user-select: none;
             font-family: RobotoDraft;
             font-size: 12px;
             line-height: 24px;
             //background: {{g.dCalendar.bgColor}};
-            background: #f44336;
+            background: #2c3a40;
             color: #FFF;
           }
           :host(.light-theme) {
@@ -62,7 +62,7 @@ yearView = 1
             color: #FFF;
             height: 36px;
             //background: {{g.dCalendar.accentColor}};
-            background: #f44336;
+            background: #2196F3;
             overflow: hidden;
             -webkit-transition: all .3s;
             transition: all .3s;
@@ -84,10 +84,10 @@ yearView = 1
             -webkit-transition: all .3s;
             transition: all .3s;
           }
-/*          :host(.light-theme) #selectedDateHeader {
+          :host(.light-theme) #selectedDateHeader {
             //background: {{scaleColor(g.dCalendar.accentColor, 10)}};
-            background: #f44336;
-          }*/
+            background: #2196F3;
+          }
           #wrapper[horizontal] #selectedDateHeader {
             height: 264px;
           }
@@ -98,13 +98,7 @@ yearView = 1
             position: relative;
             overflow: hidden;
           }
-          .selectedWeekday {
-            font-size: 14px;
-            line-height: 36px;
-            text-align: center;
-            margin: 0;
-            font-weight: 400;
-          }
+
 
           #selectedMonth,
           #selectedYear {
@@ -164,7 +158,7 @@ yearView = 1
           }
           #header paper-icon-button:active {
             //color: {{g.dCalendar.accentColor}};
-            color: #f44336;
+            color: #2196F3;
           }
 
           #viewingMonthYear {
@@ -185,9 +179,9 @@ yearView = 1
             text-align: center;
             color: rgba(255,255,255,0.2);
           }
-/*          :host(.light-theme) .weekday-name{
+          :host(.light-theme) .weekday-name{
             color: rgba(0,0,0,0.3);
-          }*/
+          }
 
           #views {
             height: 300px;
@@ -202,8 +196,7 @@ yearView = 1
             margin: 0 12px;
           }
 
-          .slideup,
-          ::shadow .slideup {
+          .slideup{
             transition: all .4s cubic-bezier(0.390, 0.575, 0.135, 0.995);
             -webkit-transition: all .4s cubic-bezier(0.390, 0.575, 0.135, 0.995);
             position: absolute;
@@ -216,23 +209,20 @@ yearView = 1
             opacity: 0;
             z-index: 0;
           }
-          .slideup.in,
-          ::shadow .slideup.in {
+          .slideup.in{
             -webkit-transform: translateY(0px);
             transform: translateY(0px);
             z-index: 1;
             opacity: 0.9;
           }
-          .slideup.out,
-          ::shadow .slideup.out {
+          .slideup.out{
             -webkit-transform: translateY(-100%);
             transform: translateY(-100%);
             z-index: 0;
             opacity: 0;
           }
 
-          .slideleft,
-          ::shadow .slideleft {
+          .slideleft {
             transition: all .3s cubic-bezier(0.390, 0.575, 0.135, 0.995);
             -webkit-transition: all .3s cubic-bezier(0.390, 0.575, 0.135, 0.995);
             width: 100%;
@@ -242,32 +232,27 @@ yearView = 1
             -webkit-transform: translateX(100%);
             transform: translateX(100%);
           }
-          .slideleft.in,
-          ::shadow .slideleft.in {
+          .slideleft.in {
             -webkit-transform: translateX(0);
             transform: translateX(0);
           }
-          .slideleft.out,
-          ::shadow .slideleft.out {
+          .slideleft.out{
             -webkit-transform: translateX(-100%);
             transform: translateX(-100%);
           }
     </style>
        
-    
-
-  <template>
+ 
       
     <iron-media-query query="max-height: 360px" query-matches="{{landscape}}"></iron-media-query>
 
     <d-date-utils id="dateUtils"></d-date-utils>
 
-    <div id="wrapper" layout horizontal?="{{landscape}}" vertical?="{{!landscape}}">
-       
-      <div id="calendar-selection" hidden?="{{ !header }}">
+       <div id="wrapper" class$="{{calculateLayout(landscape)}}">
+      <div id="calendar-selection" >
           
         <div id="selectedWeekdayHeader" class="horizontal layout">
-          <div relative flex id="selectedWeekday">
+          <div class="relative flex" id="selectedWeekday">
             <div class="selectedWeekday slideup animate">{{selectedWeekday}}</div>
           </div>
         </div>
@@ -292,7 +277,7 @@ yearView = 1
             <div cross-fade>
               <div id="header" class="horizontal layout">
                 <paper-icon-button icon="chevron-left" on-tap="prevAction" noink></paper-icon-button>
-                <div flex relative id="viewingMonthYear">
+                <div class="flex relative" id="viewingMonthYear">
                     <h4 class="viewingMonthYear slideleft animate"><span>{{viewingMonth}}</span> <span view="1" on-tap=viewSelectAction hero hero-id="poo">{{viewingYear}}</span></h4>
                 </div>
                 <paper-icon-button icon="chevron-right" on-tap="nextAction" noink></paper-icon-button>
@@ -342,7 +327,8 @@ yearView = 1
        */
       selectedDate: {
         type: Date,
-        notify: true
+        notify: true,
+        observer: "selectedDateChanged"
       },
 
       /**
@@ -355,7 +341,8 @@ yearView = 1
        */
       viewingDate: {
         type: Date,
-        notify: true
+        notify: true,
+        observer: "viewingDateChanged"
       },
       
       //selected View for iron-pages 0= dateView, 1 = yearView
@@ -389,16 +376,34 @@ yearView = 1
         type: Boolean,
         value: false
       },
+            
+      selectedWeekday:{
+          type: String,
+          notify: true,
+          observer: "observeSelectedWeekday"
+      },
       
-      fields: {
-          type: Array,
-          value: [
-            'selectedWeekday',
-            'selectedDay',
-            'selectedMonth',
-            'selectedYear',
-            'viewingMonthYear']
+      selectedDay:{
+          type: String,
+          notify: true,
+          observer: "observeSelectedDay"
+      },
+      selectedMonth:{
+          type: String,
+          notify: true,
+          observer: "observeSelectedMonth"
+      },
+      selectedYear:{
+          type: String,
+          notify: true,
+          observer: "observeSelectedYear"
+      },
+      viewingMonthYear:{
+          type: String,
+          notify: true,
+          observer: "observeViewingMonthYear"
       }
+           
     },
 
     locale: {
@@ -638,24 +643,12 @@ yearView = 1
       this.viewingDate = this.viewingDate || new Date(this.selectedDate);
       this.viewingDate.setDate(1);
       this.nowDate = new Date();
-      
-      //set variables with data (work in progress)
-      this.updateSelectedDateProps();
-      this.updateViewingDateProps();
-      
-      
-      //TEST RENDER!
-//      for(i=0; i<this.fields.length;i++){
-//          var temp = this.querySelector('.'+this.fields[i]);
-//          this.renderNode(temp);
-//      }
-      
-
       this.addEventListener('keyup', this.keyup.bind(this));
+      
     },
 
-    selectedDateChanged: function(olddate, newdate) {
-
+    selectedDateChanged: function(newdate,olddate) {
+      
       if (olddate && !olddate.getTime) olddate = new Date(olddate);
 
       if (newdate && !newdate.getTime) {
@@ -663,7 +656,6 @@ yearView = 1
         if (!newdate.getTime) return;
         this.selectedDate = newdate;
       }
-
       this.reverseAnimation = olddate && olddate.getTime() > newdate.getTime();
       this.async(this.updateSelectedDateProps);
       this.date = this.selectedDate;
@@ -672,7 +664,7 @@ yearView = 1
       this.fire('d-calendar-date-selected', {date: this.selectedDate});
     },
 
-    viewingDateChanged: function(olddate, newdate) {
+    viewingDateChanged: function(newdate,olddate) {
       this.reverseAnimation = olddate && olddate.getTime() > newdate.getTime();
       this.async(this.updateViewingDateProps);
     },
@@ -712,8 +704,8 @@ yearView = 1
     
     //Change View between dateView = 0 and yearView=1
     viewSelectAction: function(ev, detail) {
-      
-      this.selectedView = (detail.sourceEvent.originalTarget.attributes.view.nodeValue);
+      console.log(detail);
+      this.selectedView = (detail.sourceEvent.target.attributes.view.nodeValue);
     },
 
     dateSelectAction: function(ev, detail) {
@@ -732,7 +724,7 @@ yearView = 1
         this.disablePropertyAnimations = false;
       }, null, 280);
     },
-
+    //Render elements if they change. (slide effects)
     renderNode: function(element) {
       if (this.disablePropertyAnimations) return;
       var self = this;
@@ -783,7 +775,7 @@ yearView = 1
     isXSwipe: function(start, end) {
       var totalTouchTime = end.timeStamp - start.timeStamp;
       var dx = end.dx;
-      return totalTouchTime < 500 && Math.abs(dx) > 40
+      return totalTouchTime < 500 && Math.abs(dx) > 40;
     },
     trackx: function(e) {
 
@@ -795,13 +787,46 @@ yearView = 1
       if (this.isXSwipe(this.trackStartEvent, e)) {
         e.dx < 0 ? this.nextAction() : this.prevAction();
       }
-    }
+    },
 
+    observeSelectedWeekday: function(newval, oldval){
+        var el = this.querySelector('.selectedWeekday');
+        if (el) this.renderNode(el);
+    },
+    
+    observeSelectedDay: function(newval, oldval){
+        var el = this.querySelector('.selectedDay');
+        if (el) this.renderNode(el);
+    },
+    
+    observeSelectedMonth: function(newval, oldval){
+        var el = this.querySelector('.selectedMonth');
+        if (el) this.renderNode(el);
+    },
+    
+    observeSelectedYear: function(newval, oldval){
+        var el = this.querySelector('.selectedYear');
+        if (el) this.renderNode(el);
+    },
+    
+    observeViewingMonthYear: function(newval, oldval){
+        var el = this.querySelector('.viewingMonthYear');
+        if (el) this.renderNode(el);
+    },
+    
+    //calculate style depending on max-height
+    calculateLayout: function (landscape){
+        if(this.landscape === true){
+            return "horizontal layout";
+        }
+        return "vertical layout";
+       
+    }
 
   });
 
-    // Set up the values we want to watch and assign the change callback,
-    // so that we can animate the nodes bound to them.
+//    // Set up the values we want to watch and assign the change callback,
+//    // so that we can animate the nodes bound to them.
 //    var fields = [
 //      'selectedWeekday',
 //      'selectedDay',

@@ -38,15 +38,15 @@ yearView = 1
 
 
 <dom-module id="d-calendar" touch-action="auto">
-   <template>
+   
     <style> 
-        d-calendar {
+        :host {
             user-select: none;
             -webkit-user-select: none;
             font-family: RobotoDraft;
             font-size: 12px;
             line-height: 24px;
-            //background: {{g.dCalendar.bgColor}};
+            /*background: {{g.dCalendar.bgColor}};*/
             background: #2c3a40;
             color: #FFF;
           }
@@ -61,7 +61,7 @@ yearView = 1
           #selectedWeekdayHeader {
             color: #FFF;
             height: 36px;
-            //background: {{g.dCalendar.accentColor}};
+            /*background: {{g.dCalendar.accentColor}};*/
             background: #2196F3;
             overflow: hidden;
             -webkit-transition: all .3s;
@@ -85,7 +85,7 @@ yearView = 1
             transition: all .3s;
           }
           :host(.light-theme) #selectedDateHeader {
-            //background: {{scaleColor(g.dCalendar.accentColor, 10)}};
+/*            background: {{scaleColor(g.dCalendar.accentColor, 10)}};*/
             background: #2196F3;
           }
           #wrapper[horizontal] #selectedDateHeader {
@@ -157,7 +157,7 @@ yearView = 1
             transition: all .1s;
           }
           #header paper-icon-button:active {
-            //color: {{g.dCalendar.accentColor}};
+            /*color: {{g.dCalendar.accentColor}};*/
             color: #2196F3;
           }
 
@@ -196,7 +196,8 @@ yearView = 1
             margin: 0 12px;
           }
 
-          .slideup{
+          .slideup,
+          ::shadow .slideup{
             transition: all .4s cubic-bezier(0.390, 0.575, 0.135, 0.995);
             -webkit-transition: all .4s cubic-bezier(0.390, 0.575, 0.135, 0.995);
             position: absolute;
@@ -209,20 +210,23 @@ yearView = 1
             opacity: 0;
             z-index: 0;
           }
-          .slideup.in{
+          .slideup.in,
+          ::shadow .slideup.in{
             -webkit-transform: translateY(0px);
             transform: translateY(0px);
             z-index: 1;
             opacity: 0.9;
           }
-          .slideup.out{
+          .slideup.out,
+          ::shadow .slideup.out{
             -webkit-transform: translateY(-100%);
             transform: translateY(-100%);
             z-index: 0;
             opacity: 0;
           }
 
-          .slideleft {
+          .slideleft,
+          ::shadow .slideleft {
             transition: all .3s cubic-bezier(0.390, 0.575, 0.135, 0.995);
             -webkit-transition: all .3s cubic-bezier(0.390, 0.575, 0.135, 0.995);
             width: 100%;
@@ -232,17 +236,19 @@ yearView = 1
             -webkit-transform: translateX(100%);
             transform: translateX(100%);
           }
-          .slideleft.in {
+          .slideleft.in,
+          ::shadow .slideleft.in{
             -webkit-transform: translateX(0);
             transform: translateX(0);
           }
-          .slideleft.out{
+          .slideleft.out,
+          ::shadow .slideleft.out{
             -webkit-transform: translateX(-100%);
             transform: translateX(-100%);
           }
     </style>
        
- 
+    <template>
       
     <iron-media-query query="max-height: 360px" query-matches="{{landscape}}"></iron-media-query>
 
@@ -263,22 +269,22 @@ yearView = 1
           </div>
           <div id="selectedDay">
               
-            <div class="selectedDay slideup animate" view="0" on-tap=viewSelectAction>{{selectedDay}}</div>
+            <div class="selectedDay slideup animate" view="0" on-tap="viewSelectAction">{{selectedDay}}</div>
           </div>
           <div id="selectedYear">
-            <div class="selectedYear slideup animate" view="1" on-tap=viewSelectAction>{{selectedYear}}</div>
+            <div class="selectedYear slideup animate" view="1" on-tap="viewSelectAction">{{selectedYear}}</div>
           </div>
         </div>
       </div>
 
       <div id="calendar" class="vertical layout" on-trackx="trackx" on-trackstart="trackstart" on-trackend="trackend">
-        <iron-pages id="views" selected$="{{selectedView}}" transitions="slide-up hero-transition cross-fade-delayed cross-fade">
+        <iron-pages id="views" selected="{{selectedView}}" transitions="slide-up hero-transition cross-fade-delayed cross-fade">
           <section name="dateView">
             <div cross-fade>
               <div id="header" class="horizontal layout">
                 <paper-icon-button icon="chevron-left" on-tap="prevAction" noink></paper-icon-button>
                 <div class="flex relative" id="viewingMonthYear">
-                    <h4 class="viewingMonthYear slideleft animate"><span>{{viewingMonth}}</span> <span view="1" on-tap=viewSelectAction hero hero-id="poo">{{viewingYear}}</span></h4>
+                    <h4 class="viewingMonthYear slideleft animate"><span>{{viewingMonth}}</span> <span view="1" on-tap="viewSelectAction" hero hero-id="poo">{{viewingYear}}</span></h4>
                 </div>
                 <paper-icon-button icon="chevron-right" on-tap="nextAction" noink></paper-icon-button>
               </div>
@@ -704,8 +710,9 @@ yearView = 1
     
     //Change View between dateView = 0 and yearView=1
     viewSelectAction: function(ev, detail) {
-      console.log(detail);
+        
       this.selectedView = (detail.sourceEvent.target.attributes.view.nodeValue);
+      
     },
 
     dateSelectAction: function(ev, detail) {
@@ -752,13 +759,13 @@ yearView = 1
           el.classList.remove('out'); // animate to start position
         }
         el.classList.add('in');
-      }),
+      },50),
       this.async(function(){
         try {
           el.parentNode.removeChild(elClone);
         } catch (err) {
         }
-      }, null, delayRemovalTime);
+      }, 50, delayRemovalTime);
     },
 
     keyup: function(e){

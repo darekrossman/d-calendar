@@ -26,7 +26,7 @@
             margin: 0;
           }
           paper-button::shadow #ripple {
-            //color: {{g.dCalendar.accentColor}};
+            /*color: {{g.dCalendar.accentColor}};*/
             color: #2196F3;
           }
         
@@ -102,7 +102,6 @@
     
     //Fire selected year to "d-calendar-year-selected"
     yearSelected: function(e, detail) {
-      console.log(detail);
       this.fire('d-calendar-year-selected', {year: detail.sourceEvent.target.innerHTML });
     },
     

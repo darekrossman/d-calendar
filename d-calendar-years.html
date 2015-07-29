@@ -1,51 +1,130 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../paper-button/paper-button.html"/>
-<link rel="import" href="d-calendar-theme.html"/>
+<!--<link rel="import" href="d-calendar-theme.html"/>-->
 <link rel="import" href="d-date-utils.html"/>
 
-<polymer-element name="d-calendar-years" attributes="startYear years viewingYear">
-  <template> 
-    <core-style ref="d-calendar-theme-years"></core-style>
-
+<dom-module id="d-calendar-years">
+   
+    <style>
+        #years {
+            box-sizing: border-box;
+            height: 300px;
+            max-width: 100%;
+            padding: 6px;
+            overflow: auto;
+          }
+          .year {
+            width: 33.3%;
+            text-align: center;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 36px;
+          }
+          .year paper-button {
+            display: block;
+            width: 100%;
+            margin: 0;
+          }
+          paper-button::shadow #ripple {
+            color: #2196F3;
+          }
+        
+    </style>
+    
+  <template>
     <d-date-utils id="dateUtils"></d-date-utils>
 
-    <div id="years" layout horizontal wrap>
-      <template repeat="{{year, i in yearsArray}}">
-        <div class="year" layout horizontal center center-justified hero?="{{i + startYear == viewingYear}}" hero-id="poo">
-          <paper-button year="{{i + startYear}}" on-tap="{{yearSelected}}" recenteringTouch>{{i + startYear}}</paper-button>
-        </div>  
+    <div id="years" class= "horizontal layout wrap">
+      <template is="dom-repeat" items="{{yearsArray}}">
+        <div class="year horizontal center-justified layout" hero?="{{compareStartViewing(item.year)}}" hero-id="poo">
+          <paper-button data-year="{{item.year}}" on-tap="yearSelected" recenteringTouch>{{item.year}}</paper-button>
+        </div>
       </template>
     </div>
-     
   </template>
- 
-  <script>
-  (function(){
 
-    Polymer({
-      startYear: null,
-      years: null,
-      yearsArray: Array(this.years),
-      
-      ready: function(){
-        var now = this.viewingYear || new Date().getFullYear();
-        this.startYear = this.startYear || now - 2;
-        this.years = this.years || 15;
+
+
+<script>
+
+
+  Polymer({
+    is: 'd-calendar-years',
+
+    properties: {
+      startYear: {
+          type: Number,
+          value: null
       },
-
-      yearsChanged: function() {
-        this.yearsArray = Array(this.years)
+      //number of years displayed on the grid
+      years:{
+          type: Number,
+          value: null,
+          notify:true,
+          observer: "calculateYears"
+          
       },
-
-      yearSelected: function(e, detail, sender) {
-        this.fire('d-calendar-year-selected', {year: sender.getAttribute('year')})
+      //array with years, displayed on the grid
+      yearsArray: {
+          type: Array,
+          value: []
+      },
+      viewingYear:{
+          type: Date,
+          notify: true
       }
-    })
+    },
+
+    ready: function(){
+      
+      var now = this.viewingYear || new Date().getFullYear();
+      this.startYear = this.startYear || now - 2;
+      this.years = this.years || 15;
+      
+    },
     
-  })()
-  </script>
-</polymer-element>
 
+    //calculate years depending on startYear and yearsArray
+    calculateYears : function(newval,oldval){
+        var temp=[];
+        var calcYear;
+        if(newval===null){
+            return;
+        }
+        
+        for (i=1; i<=newval; i++){
+            calcYear = i + this.startYear;
+            temp.push({year: calcYear});
+        }
+        this.yearsArray = temp;
+    },
+    
+    //Fire selected year to "d-calendar-year-selected"
+    yearSelected: function(e, detail) {
+      this.fire('d-calendar-year-selected', {year: detail.sourceEvent.target.innerHTML });
+    },
+    
+    //calculate Years depending on startYear and yearsArray
+    incYear: function(year){
+        return this.startYear+year;
+    },
+    
+    /**
+     * compares start and viewingYear and returns true if it matches
+     * @param String year
+     * @returns Boolean
+     */
+    compareStartViewing: function(year){
+        if((year + this.startYear) === this.viewingYear){
+            return true;
+        }else{
+            return false;
+        }
+        
+    }
+    
+    
+  });
 
-
-
+</script>
+</dom-module>

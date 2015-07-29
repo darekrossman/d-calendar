@@ -1,153 +1,211 @@
 <link rel="import" href="../polymer/polymer.html">
-<polymer-element name="d-date-utils" hidden>
-  <script>
-    Polymer({
-      addDays: function(d, days) {
-        var newDate = this.clone(d);
-        newDate.setDate(d.getDate() + days);
-        return newDate;
-      },
 
-      addMonths: function(d, months) {
-        var newDate = this.clone(d);
-        newDate.setMonth(d.getMonth() + months);
-        return newDate;
-      },
+<dom-module id="d-date-utils">
+    <template>
+        
+<!--        do i need this?-->
+    </template>
+<script>
+Polymer({
+  is: 'd-date-utils',
 
-      clone: function(d) {
-        return new Date(d.getTime());
-      },
+  addDays: function(d, days) {
+    var newDate = this.clone(d);
+    newDate.setDate(d.getDate() + days);
+    return newDate;
+  },
 
-      getDaysInMonth: function(d) {
-        var resultDate = this.getFirstDayOfMonth(d);
+  addMonths: function(d, months) {
+    var newDate = this.clone(d);
+    newDate.setMonth(d.getMonth() + months);
+    return newDate;
+  },
 
-        resultDate.setMonth(resultDate.getMonth() + 1);
-        resultDate.setDate(resultDate.getDate() - 1);
+  clone: function(d) {
+    return new Date(d.getTime());
+  },
 
-        return resultDate.getDate();
-      },
+  getDaysInMonth: function(d) {
+    var resultDate = this.getFirstDayOfMonth(d);
 
-      getFirstDayOfMonth: function(d) {
-        return new Date(d.getFullYear(), d.getMonth(), 1);
-      },
+    resultDate.setMonth(resultDate.getMonth() + 1);
+    resultDate.setDate(resultDate.getDate() - 1);
 
-      getWeekArray: function(d) {
-        var dayArray = [];
-        var daysInMonth = this.getDaysInMonth(d);
-        var daysInWeek;
-        var emptyDays;
-        var firstDayOfWeek;
-        var week;
-        var weekArray = [];
+    return resultDate.getDate();
+  },
 
-        for (var i = 1; i <= daysInMonth; i++) {
-          dayArray.push(new Date(d.getFullYear(), d.getMonth(), i));
-        };
+  getFirstDayOfMonth: function(d) {
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+  },
+  //Array of all weeks in a month
+  //Array example: [{weekitem: [{dayitem: date},{dayitem: date}]},{weekitem: [{dayitem: date},...}]
+  getWeekArray: function(d, language) {
+    var dayArray = [];
+    var daysInMonth = this.getDaysInMonth(d);
+    var daysInWeek;
+    var emptyDays;
+    var firstDayOfWeek;
+    var week;
+    var weekArray = [];
 
-        while (dayArray.length) {
-          firstDayOfWeek = dayArray[0].getDay();
-          daysInWeek = 7 - firstDayOfWeek;
-          emptyDays = 7 - daysInWeek;
-          week = dayArray.splice(0, daysInWeek);
+    for (var i = 1; i <= daysInMonth; i++) {
+      dayArray.push(new Date(d.getFullYear(), d.getMonth(), i));
+    };
+    
+    while (dayArray.length) {
+      firstDayOfWeek = dayArray[0].getDay();
+      
+      //switch week layout, first day of the week is monday if lanugage=de
+      //add more langugages if you need
+      if(language === 'de'){
+         firstDayOfWeek=firstDayOfWeek-1;
+      }
+      
+      daysInWeek = 7 - firstDayOfWeek;
+      emptyDays = 7 - daysInWeek;
+      week = dayArray.splice(0, daysInWeek);
+      for (var i = 0; i < emptyDays; i++) {
+        week.unshift(null);
+      };
 
-          for (var i = 0; i < emptyDays; i++) {
-            week.unshift(null);
-          };
+      //------------------------------
+      //make associative arrays
+      var temp=[];
+      for(i=0; i<week.length; i++){
+          temp.push({dayitem: week[i] });
+      }
+      weekArray.push({weekitem: temp}); //testing
+      //console.log(weekArray);
+      //------------------------------
+    }
+    return weekArray;
+  },
+  
 
-          weekArray.push(week);
+  isEqualDate: function(d1, d2) {
+    return d1 && d2 &&
+      (d1.getFullYear() === d2.getFullYear()) &&
+      (d1.getMonth() === d2.getMonth()) &&
+      (d1.getDate() === d2.getDate());
+  },
+
+  isEqualMonth: function(d1, d2) {
+    return d1 && d2 &&
+      (d1.getFullYear() === d2.getFullYear()) &&
+      (d1.getMonth() === d2.getMonth());
+  },
+
+  monthDiff: function(d1, d2) {
+    var m;
+    m = (d1.getFullYear() - d2.getFullYear()) * 12;
+    m += d1.getMonth();
+    m -= d2.getMonth();
+    return m;
+  },
+  
+  /**
+* Transform a supplied input date using a specified format
+* @param  {date} input
+* @param  {string} format
+* @return {date}
+*/
+    formatDate : function (input, format) {
+        
+        var date = new Date(input),
+            day = date.getDate(),
+            month = date.getMonth() + 1,
+            year = date.getFullYear(),
+            hours = date.getHours(),
+            minutes = date.getMinutes(),
+            seconds = date.getSeconds();
+        if (!format) {
+          format = "MM/dd/yyyy";
         }
 
-        return weekArray;
-      },
+        format = format.replace("MM", month.toString().replace(/^(\d)$/, '0$1'));
 
-      isEqualDate: function(d1, d2) {
-        return d1 && d2 &&
-          (d1.getFullYear() === d2.getFullYear()) &&
-          (d1.getMonth() === d2.getMonth()) &&
-          (d1.getDate() === d2.getDate());
-      },
+        if (format.indexOf("yyyy") > -1) {
+          format = format.replace("yyyy", year.toString());
+        } else if (format.indexOf("yy") > -1) {
+          format = format.replace("yy", year.toString().substr(2, 2));
+        }
 
-      isEqualMonth: function(d1, d2) {
-        return d1 && d2 &&
-          (d1.getFullYear() === d2.getFullYear()) &&
-          (d1.getMonth() === d2.getMonth());
-      },
+        format = format.replace("dd", day.toString().replace(/^(\d)$/, '0$1'));
 
-      monthDiff: function(d1, d2) {
-        var m;
-        m = (d1.getFullYear() - d2.getFullYear()) * 12;
-        m += d1.getMonth();
-        m -= d2.getMonth();
-        return m;
+        if (format.indexOf("t") > -1) {
+          if (hours > 11) {
+            format = format.replace("t", "pm");
+          } else {
+            format = format.replace("t", "am");
+          }
+        }
+
+        if (format.indexOf("HH") > -1) {
+          format = format.replace("HH", hours.toString().replace(/^(\d)$/, '0$1'));
+        }
+
+        if (format.indexOf("hh") > -1) {
+          if (hours > 12) {
+            hours -= 12;
+          }
+
+          if (hours === 0) {
+            hours = 12;
+          }
+          format = format.replace("hh", hours.toString().replace(/^(\d)$/, '0$1'));
+        }
+
+        if (format.indexOf("mm") > -1) {
+          format = format.replace("mm", minutes.toString().replace(/^(\d)$/, '0$1'));
+        }
+
+        if (format.indexOf("ss") > -1) {
+          format = format.replace("ss", seconds.toString().replace(/^(\d)$/, '0$1'));
+        }
+
+        return format;
+      },
+    //Render elements if they change. (slide effects)
+    renderNode: function(element) {
+      if (this.disablePropertyAnimations) return;
+      var self = this;
+      var delayRemovalTime = 400;
+      var el = element;
+      var elClone = el.cloneNode(true);
+
+      el._originalTransition = element.style.transition;
+      el.style.transition = 'none';
+      el.parentElement.appendChild(elClone);
+      
+     
+      if (!this.reverseAnimation) {
+        el.classList.remove('in') // back to start position immediately
+      } else {
+        el.classList.add('out') // go to end position immediately
       }
 
-    })
-
-/**
- * Transform a supplied input date using a specified format
- * @param  {date} input  
- * @param  {string} format
- * @return {date}
- */
-PolymerExpressions.prototype.date = function (input, format) {
-    var date = new Date(input),
-        day = date.getDate(),
-        month = date.getMonth() + 1,
-        year = date.getFullYear(),
-        hours = date.getHours(),
-        minutes = date.getMinutes(),
-        seconds = date.getSeconds();
-
-    if (!format) {
-        format = "MM/dd/yyyy";
-    }
-
-    format = format.replace("MM", month.toString().replace(/^(\d)$/, '0$1'));
-
-    if (format.indexOf("yyyy") > -1) {
-        format = format.replace("yyyy", year.toString());
-    } else if (format.indexOf("yy") > -1) {
-        format = format.replace("yy", year.toString().substr(2, 2));
-    }
-
-    format = format.replace("dd", day.toString().replace(/^(\d)$/, '0$1'));
-
-    if (format.indexOf("t") > -1) {
-        if (hours > 11) {
-            format = format.replace("t", "pm");
+      this.async(function(){
+        el.style.transition = el._originalTransition;
+        if (!this.reverseAnimation) {
+          elClone.classList.add('out'); // animate to end position
         } else {
-            format = format.replace("t", "am");
+          elClone.classList.remove('in'); // animate to start position
+          el.classList.remove('out'); // animate to start position
         }
-    }
-
-    if (format.indexOf("HH") > -1) {
-        format = format.replace("HH", hours.toString().replace(/^(\d)$/, '0$1'));
-    }
-
-    if (format.indexOf("hh") > -1) {
-        if (hours > 12) {
-            hours -= 12;
+        el.classList.add('in');
+      },50),
+      this.async(function(){
+        try {
+          el.parentNode.removeChild(elClone);
+        } catch (err) {
         }
-
-        if (hours === 0) {
-            hours = 12;
-        }
-        format = format.replace("hh", hours.toString().replace(/^(\d)$/, '0$1'));
+      }, 50, delayRemovalTime);
     }
 
-    if (format.indexOf("mm") > -1) {
-        format = format.replace("mm", minutes.toString().replace(/^(\d)$/, '0$1'));
-    }
-
-    if (format.indexOf("ss") > -1) {
-        format = format.replace("ss", seconds.toString().replace(/^(\d)$/, '0$1'));
-    }
-
-    return format;
-};
-  </script>
-</polymer-element>
+});
 
 
+</script>
 
 
+</dom-module>

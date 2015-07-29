@@ -293,6 +293,7 @@ yearView = 1
               <d-calendar-weeks
                 date="{{viewingDate}}"
                 selected-date="{{selectedDate}}"
+                language="{{language}}"
                 on-d-calendar-date-selected="dateSelectAction">
               </d-calendar-weeks>
             </div>
@@ -656,12 +657,12 @@ yearView = 1
           ],
 
           shortDayNames: [
-              {dayname:'S'},
               {dayname:'M'},
               {dayname:'D'},
               {dayname:'M'},
               {dayname:'D'},
               {dayname:'F'},
+              {dayname:'S'},
               {dayname:'S'}
           ]
       }

@@ -110,11 +110,16 @@ Fired when selecting a specific day of the month.
     is: 'd-calendar-weeks',
 
     properties: {
+      
+      language: String,
+      
+      
       date:{
           type: Date,
           notify: true,
           observer: "dateChanged"
       },
+      
       selectedDate: Date
       
     },
@@ -148,9 +153,8 @@ Fired when selecting a specific day of the month.
       if (this.dateUtils.isEqualMonth(oldDate, newDate)) {
         return;
       }
-
       // update the model data for the weeks grid
-      this.weeks= this.dateUtils.getWeekArray(this.date);
+      this.weeks= this.dateUtils.getWeekArray(this.date, this.language);
       
       //Render Weeks to get slide effects
       var el = this.querySelector('.weeks');

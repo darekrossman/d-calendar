@@ -39,7 +39,7 @@ Polymer({
   },
   //Array of all weeks in a month
   //Array example: [{weekitem: [{dayitem: date},{dayitem: date}]},{weekitem: [{dayitem: date},...}]
-  getWeekArray: function(d) {
+  getWeekArray: function(d, language) {
     var dayArray = [];
     var daysInMonth = this.getDaysInMonth(d);
     var daysInWeek;
@@ -54,16 +54,20 @@ Polymer({
     
     while (dayArray.length) {
       firstDayOfWeek = dayArray[0].getDay();
+      
+      //switch week layout, first day of the week is monday if lanugage=de
+      //add more langugages if you need
+      if(language === 'de'){
+         firstDayOfWeek=firstDayOfWeek-1;
+      }
+      
       daysInWeek = 7 - firstDayOfWeek;
       emptyDays = 7 - daysInWeek;
       week = dayArray.splice(0, daysInWeek);
       for (var i = 0; i < emptyDays; i++) {
         week.unshift(null);
-    };
+      };
 
-      //change weekview to european layout
-      
-      
       //------------------------------
       //make associative arrays
       var temp=[];

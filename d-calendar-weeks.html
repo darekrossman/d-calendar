@@ -42,7 +42,6 @@ Fired when selecting a specific day of the month.
         }
         .day.currentday {
           font-weight: 500;
-          /*color: {{g.dCalendar.accentColor}};*/
           color: #2196F3;
         }
 
@@ -54,7 +53,6 @@ Fired when selecting a specific day of the month.
           right: 3px;
           bottom: 3px;
           left: 3px;
-          /*background: {{g.dCalendar.accentColor}};*/
           background: #2196F3;
           z-index: 0;
           -webkit-transform: scale(0);
@@ -87,8 +85,7 @@ Fired when selecting a specific day of the month.
   <template>
     <d-date-utils id="dateUtils"></d-date-utils>
     <div id="days">
-       <div class="weeks ">
-<!--         <div class="weeks slideleft">-->
+       <div class="weeks slideleft">
         <div class="horizontal layout wrap">
           <template is="dom-repeat" items="{{weeks}}" as="week">
             <template is="dom-repeat" items="{{week.weekitem}}" as="day">
@@ -133,17 +130,6 @@ Fired when selecting a specific day of the month.
       
     },
 
-    attached: function() {
-        
-        this.async(function(){
-            this.updateWeeks();
-            
-            //fill variables with input
-            //this.weeks= this.dateUtils.getWeekArray(this.date);
-                        
-        });
-    },
-
     isSameDay: function(d1, d2) {
       return this.dateUtils.isEqualDate(d1, d2);
     },
@@ -163,20 +149,12 @@ Fired when selecting a specific day of the month.
         return;
       }
 
-      // updates the model data for the weeks grids
+      // update the model data for the weeks grid
       this.weeks= this.dateUtils.getWeekArray(this.date);
-
-//
-//      this.weeksFull = this.dateUtils.getWeekArray(this.date);
-//      this.weeks = this.dateUtils.getWeekArray(this.date).map(function(week){
-//        if (!week || week == null) return null;
-//        return week.map(function(day){
-//          return day ? day.getDate() : null;
-//        })
-//      });
-
-      // hacky - using our parent's methods
-      //this.templateInstance.model.renderNode(this.$.days.querySelector('.weeks'));
+      
+      //Render Weeks to get slide effects
+      var el = this.querySelector('.weeks');
+      this.dateUtils.renderNode(el);
     },
 
     updateWeeks: function() {

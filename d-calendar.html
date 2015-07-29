@@ -46,7 +46,6 @@ yearView = 1
             font-family: RobotoDraft;
             font-size: 12px;
             line-height: 24px;
-            /*background: {{g.dCalendar.bgColor}};*/
             background: #2c3a40;
             color: #FFF;
           }
@@ -61,7 +60,6 @@ yearView = 1
           #selectedWeekdayHeader {
             color: #FFF;
             height: 36px;
-            /*background: {{g.dCalendar.accentColor}};*/
             background: #2196F3;
             overflow: hidden;
             -webkit-transition: all .3s;
@@ -85,7 +83,6 @@ yearView = 1
             transition: all .3s;
           }
           :host(.light-theme) #selectedDateHeader {
-/*            background: {{scaleColor(g.dCalendar.accentColor, 10)}};*/
             background: #2196F3;
           }
           #wrapper[horizontal] #selectedDateHeader {
@@ -157,7 +154,6 @@ yearView = 1
             transition: all .1s;
           }
           #header paper-icon-button:active {
-            /*color: {{g.dCalendar.accentColor}};*/
             color: #2196F3;
           }
 
@@ -367,7 +363,7 @@ yearView = 1
        * @default 'en'
        */
       language: {
-        type: Date,
+        type: String,
         value: 'en'
       },
 
@@ -506,14 +502,14 @@ yearView = 1
           ],
 
           shortDayNames: [
-              'di',
-              'lu',
-              'ma',
-              'me',
-              'ja',
-              've',
-              'sa'
-          ],
+              {dayname: 'di'},
+              {dayname: 'lu'},
+              {dayname: 'ma'},
+              {dayname: 'me'},
+              {dayname: 'ja'},
+              {dayname: 've'},
+              {dayname: 'sa'}
+          ]
       },
       'es': {
           monthNames: [
@@ -557,14 +553,14 @@ yearView = 1
           ],
 
           shortDayNames: [
-              'D',
-              'L',
-              'M',
-              'X',
-              'J',
-              'V',
-              'S'
-          ],
+              {dayname: 'D'},
+              {dayname: 'L'},
+              {dayname: 'M'},
+              {dayname: 'X'},
+              {dayname: 'J'},
+              {dayname: 'V'},
+              {dayname: 'S'}
+          ]
       },
 
       'ru': {
@@ -609,15 +605,15 @@ yearView = 1
           ],
 
           shortDayNames: [
-              'Вс',
-              'Пн',
-              'Вт',
-              'Ср',
-              'Чт',
-              'Пт',
-              'Сб'
-          ],
-      },
+              {dayname: 'Вс'},
+              {dayname: 'Пн'},
+              {dayname: 'Вт'},
+              {dayname: 'Ср'},
+              {dayname: 'Чт'},
+              {dayname: 'Пт'},
+              {dayname: 'Сб'}
+          ]
+      }
     },
 
     getFullMonth: function(d) {
@@ -731,42 +727,6 @@ yearView = 1
         this.disablePropertyAnimations = false;
       }, null, 280);
     },
-    //Render elements if they change. (slide effects)
-    renderNode: function(element) {
-      if (this.disablePropertyAnimations) return;
-      var self = this;
-      var delayRemovalTime = 400;
-      var el = element;
-      var elClone = el.cloneNode(true);
-
-      el._originalTransition = element.style.transition;
-      el.style.transition = 'none';
-      el.parentElement.appendChild(elClone);
-      
-     
-      if (!this.reverseAnimation) {
-        el.classList.remove('in') // back to start position immediately
-      } else {
-        el.classList.add('out') // go to end position immediately
-      }
-
-      this.async(function(){
-        el.style.transition = el._originalTransition;
-        if (!this.reverseAnimation) {
-          elClone.classList.add('out'); // animate to end position
-        } else {
-          elClone.classList.remove('in'); // animate to start position
-          el.classList.remove('out'); // animate to start position
-        }
-        el.classList.add('in');
-      },50),
-      this.async(function(){
-        try {
-          el.parentNode.removeChild(elClone);
-        } catch (err) {
-        }
-      }, 50, delayRemovalTime);
-    },
 
     keyup: function(e){
       var month = this.selectedDate.getMonth();
@@ -795,35 +755,35 @@ yearView = 1
         e.dx < 0 ? this.nextAction() : this.prevAction();
       }
     },
-
+    //Observer functions called if properties change
     observeSelectedWeekday: function(newval, oldval){
         var el = this.querySelector('.selectedWeekday');
-        if (el) this.renderNode(el);
+        if (el) this.dateUtils.renderNode(el);
     },
     
     observeSelectedDay: function(newval, oldval){
         var el = this.querySelector('.selectedDay');
-        if (el) this.renderNode(el);
+        if (el) this.dateUtils.renderNode(el);
     },
     
     observeSelectedMonth: function(newval, oldval){
         var el = this.querySelector('.selectedMonth');
-        if (el) this.renderNode(el);
+        if (el) this.dateUtils.renderNode(el);
     },
     
     observeSelectedYear: function(newval, oldval){
         var el = this.querySelector('.selectedYear');
-        if (el) this.renderNode(el);
+        if (el) this.dateUtils.renderNode(el);
     },
     
     observeViewingMonthYear: function(newval, oldval){
         var el = this.querySelector('.viewingMonthYear');
-        if (el) this.renderNode(el);
+        if (el) this.dateUtils.renderNode(el);
     },
     
     //calculate style depending on max-height
     calculateLayout: function (landscape){
-        if(this.landscape === true){
+        if(landscape === true){
             return "horizontal layout";
         }
         return "vertical layout";
@@ -831,23 +791,5 @@ yearView = 1
     }
 
   });
-
-//    // Set up the values we want to watch and assign the change callback,
-//    // so that we can animate the nodes bound to them.
-//    var fields = [
-//      'selectedWeekday',
-//      'selectedDay',
-//      'selectedMonth',
-//      'selectedYear',
-//      'viewingMonthYear'
-//    ];
-//
-//    fields.forEach(function(field){
-//      prototype[field + 'Changed'] = function(oldval, newval) {
-//        var el = this.shadowRoot.querySelector('.' + field);
-//        if (el) this.renderNode(el);
-//      }
-//    });
-
  
 </script>

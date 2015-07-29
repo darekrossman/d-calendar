@@ -69,20 +69,20 @@
       
     <div class="horizontal center center-justified layout">
       <d-calendar selected-date="{{selectedDate}}" date="{{date}}" class="light-theme" on-d-calendar-date-selected="dateSelected"></d-calendar>
-<!--      <d-calendar selected-date="{{selectedDate}}" header class="light-theme" language="ru"></d-calendar>
-      <d-calendar selected-date="{{selectedDate}}" language="eo"></d-calendar>-->
+      <d-calendar selected-date="{{selectedDate}}" header class="light-theme" language="ru" on-d-calendar-date-selected="dateSelected"></d-calendar>
     </div>
 
     <div id="dateDisplay">
       <input id="dateinput" placeholder="Selected Date" value="{{selectedDate}}"></input>
     </div>
 
-
+<!--choose color for demo is disabled, its not working since port to polymer 1.0
     <div class="swatch-bar">
       <template is="dom-repeat" items="{{colors}}">   
         <div class="swatch" on-tap="selectColor" data-color="{{item.color}}" style$="{{item.background}}"></div>
       </template>
     </div>
+-->
   </template>
 
   <script>
@@ -99,11 +99,8 @@
     
     //update shown date in demo with the right format
     sandbox.updateDateInputValue = function(){
-        
-        //sandbox.$.dateinput.value=PolymerExpressions.prototype.date(this.selectedDate);
-        
         //update selected date with right format
-        sandbox.$.dateinput.value = sandbox.$.dateUtils.formatDate(this.selectedDate,'dd.MM.yyyy');
+        sandbox.$.dateinput.value = sandbox.$.dateUtils.formatDate(this.selectedDate);
     };
     
     sandbox.colors = [
@@ -129,14 +126,15 @@
 
     sandbox.selectColor = function(ev, detail) {
       console.log("Color selected");
-      console.log(detail.sourceEvent.explicitOriginalTarget.dataColor);
-      //sender is not availible in 1.0
-      sandbox.selectedColor = detail.sourceEvent.explicitOriginalTarget.dataColor;
-      CoreStyle.g.dCalendar.accentColor =  sandbox.selectedColor;
+      console.log(detail.sourceEvent.target.dataColor);
+      
+      sandbox.selectedColor = detail.sourceEvent.target.dataColor;
+      //CoreStyle.g.dCalendar.accentColor =  sandbox.selectedColor;
     };
 
     sandbox.selectedColor = '#2196F3';
     
+    //format dateinput
     sandbox.updateDateInputValue();
     
   });

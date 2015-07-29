@@ -163,7 +163,43 @@ Polymer({
         }
 
         return format;
+      },
+    //Render elements if they change. (slide effects)
+    renderNode: function(element) {
+      if (this.disablePropertyAnimations) return;
+      var self = this;
+      var delayRemovalTime = 400;
+      var el = element;
+      var elClone = el.cloneNode(true);
+
+      el._originalTransition = element.style.transition;
+      el.style.transition = 'none';
+      el.parentElement.appendChild(elClone);
+      
+     
+      if (!this.reverseAnimation) {
+        el.classList.remove('in') // back to start position immediately
+      } else {
+        el.classList.add('out') // go to end position immediately
       }
+
+      this.async(function(){
+        el.style.transition = el._originalTransition;
+        if (!this.reverseAnimation) {
+          elClone.classList.add('out'); // animate to end position
+        } else {
+          elClone.classList.remove('in'); // animate to start position
+          el.classList.remove('out'); // animate to start position
+        }
+        el.classList.add('in');
+      },50),
+      this.async(function(){
+        try {
+          el.parentNode.removeChild(elClone);
+        } catch (err) {
+        }
+      }, 50, delayRemovalTime);
+    }
 
 });
 

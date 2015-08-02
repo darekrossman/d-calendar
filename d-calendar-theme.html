@@ -2,7 +2,7 @@
 <link rel="import" href="../core-style/core-style.html"/>
 
 <core-style id="d-calendar-theme">
-  :host { 
+  :host {
     user-select: none;
     -webkit-user-select: none;
     font-family: RobotoDraft;
@@ -10,11 +10,11 @@
     line-height: 24px;
     background: {{g.dCalendar.bgColor}};
     color: #FFF;
-  } 
+  }
   :host(.light-theme) {
-    background: #FFF; 
+    background: #FFF;
     color: #111;
-  } 
+  }
   :host * {
    cursor: default;
   }
@@ -88,7 +88,7 @@
     color: rgba(255, 255, 255, 0.6);
   }
 
-  
+
   #wrapper[horizontal] #selectedMonth,
   #wrapper[horizontal] #selectedYear {
     height: 50px;
@@ -109,7 +109,7 @@
   }
 
   #calendar {
-    
+
   }
 
   #header {
@@ -117,7 +117,7 @@
     overflow: hidden;
     padding: 0 9px;
     margin-bottom: 0px;
-  } 
+  }
   #header paper-icon-button {
     margin: 4px 0;
     transition: all .1s;
@@ -162,9 +162,9 @@
   }
 
   .slideup,
-  ::shadow .slideup {  
-    transition: all .4s cubic-bezier(0.390, 0.575, 0.135, 0.995); 
-    -webkit-transition: all .4s cubic-bezier(0.390, 0.575, 0.135, 0.995); 
+  ::shadow .slideup {
+    transition: all .4s cubic-bezier(0.390, 0.575, 0.135, 0.995);
+    -webkit-transition: all .4s cubic-bezier(0.390, 0.575, 0.135, 0.995);
     position: absolute;
     -webkit-transform: translateY(100%);
     transform: translateY(100%);
@@ -188,12 +188,12 @@
     transform: translateY(-100%);
     z-index: 0;
     opacity: 0;
-  }  
+  }
 
   .slideleft,
   ::shadow .slideleft {
-    transition: all .3s cubic-bezier(0.390, 0.575, 0.135, 0.995); 
-    -webkit-transition: all .3s cubic-bezier(0.390, 0.575, 0.135, 0.995); 
+    transition: all .3s cubic-bezier(0.390, 0.575, 0.135, 0.995);
+    -webkit-transition: all .3s cubic-bezier(0.390, 0.575, 0.135, 0.995);
     width: 100%;
     position: absolute;
     top: 0;
@@ -211,7 +211,6 @@
     -webkit-transform: translateX(-100%);
     transform: translateX(-100%);
   }
-
 </core-style>
 
 <core-style id="d-calendar-theme-weeks">
@@ -232,7 +231,7 @@
     width: 36px;
     height: 36px;
     position: relative;
-  } 
+  }
   .day.currentday {
     font-weight: 500;
     color: {{g.dCalendar.accentColor}};
@@ -268,7 +267,7 @@
   }
 
   .day[selected] div {
-    color: #FFF; 
+    color: #FFF;
     font-weight: 600;
   }
 </core-style>
@@ -279,7 +278,7 @@
     height: 300px;
     max-width: 100%;
     padding: 6px;
-    overflow: auto; 
+    overflow: auto;
   }
   .year {
     width: 33.3%;
@@ -301,10 +300,10 @@
 <script>
 
   (function(){
-    
+
     CoreStyle.g.dCalendar = {
       accentColor: '#2196F3',
-      bgColor: '#2c3a40' 
+      bgColor: '#2c3a40'
     };
 
     document._currentScript.ownerDocument.getElementById('d-calendar-theme').scaleColor = scaleColor;
@@ -327,9 +326,7 @@
       else if (g < 0) g = 0;
       return (usePound?"#":"") + String("000000" + (g | (b << 8) | (r << 16)).toString(16)).slice(-6);
     }
-    
+
   })()
 
 </script>
-
-

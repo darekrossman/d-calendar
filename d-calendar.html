@@ -1,6 +1,4 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../iron-meta/iron-meta.html"/>
-<link rel="import" href="../iron-style/iron-style.html"/>
 <link rel="import" href="../iron-media-query/iron-media-query.html"/>
 <link rel="import" href="../iron-pages/iron-pages.html"/>
 <link rel="import" href="../paper-icon-button/paper-icon-button.html"/>
@@ -36,7 +34,7 @@ Fired when an item element is tapped.
 
   <template id="template">
 
-    <iron-style ref="d-calendar-theme"></iron-style>
+    <style include="d-calendar-theme"></style>
 
     <iron-media-query query="max-height: 360px" queryMatches="{{landscape}}"></iron-media-query>
 

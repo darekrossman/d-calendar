@@ -27,8 +27,15 @@
 
     properties: {
       startYear: Number,
-      years: Array,
-      yearsArray: Array
+      years: {
+        type: Array,
+        notify: true
+        observer: 'yearsChanged'
+      },
+      yearsArray: {
+        type: Array,
+        notify: true
+      }
     },
 
     ready: function(){

@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-media-query/iron-media-query.html"/>
 <link rel="import" href="../iron-pages/iron-pages.html"/>
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../paper-icon-button/paper-icon-button.html"/>
 <link rel="import" href="d-calendar-theme.html"/>
 <link rel="import" href="d-calendar-weeks.html"/>
@@ -40,16 +41,17 @@ Fired when an item element is tapped.
 
     <d-date-utils id="dateUtils"></d-date-utils>
 
-    <div id="wrapper" layout horizontal?="{{landscape}}" vertical?="{{!landscape}}">
+    <div id="wrapper" class="layout horizontal">
+    <!-- ?="{{landscape}}" vertical?="{{!landscape}}"> -->
 
       <div id="calendar-selection" hidden?="{{ !header }}">
-        <div id="selectedWeekdayHeader" layout horizontal>
+        <div id="selectedWeekdayHeader" class="layout horizontal">
           <div relative flex id="selectedWeekday">
             <div class="selectedWeekday slideup animate">{{selectedWeekday}}</div>
           </div>
         </div>
 
-        <div id="selectedDateHeader" layout vertical center center-justified>
+        <div id="selectedDateHeader" class="layout vertical center center-justified">
           <div id="selectedMonth">
             <div class="selectedMonth slideup animate" style="text-transform: uppercase">{{selectedMonth}}</div>
           </div>
@@ -62,12 +64,12 @@ Fired when an item element is tapped.
         </div>
       </div>
 
-      <div id="calendar" layout vertical on-trackx="{{trackx}}" on-trackstart="{{trackstart}}" on-trackend="{{trackend}}">
+      <div id="calendar" class="layout vertical" on-trackx="{{trackx}}" on-trackstart="{{trackstart}}" on-trackend="{{trackend}}">
 
         <iron-pages id="views" selected="{{selectedView}}" transitions="slide-up hero-transition cross-fade-delayed cross-fade">
           <section name="dateView">
-            <div cross-fade>
-              <div id="header" layout horizontal>
+            <div>
+              <div id="header" class="layout horizontal">
                 <paper-icon-button icon="chevron-left" on-tap="{{prevAction}}" noink></paper-icon-button>
                 <div flex relative id="viewingMonthYear">
                   <h4 class="viewingMonthYear slideleft animate">{{viewingMonth}} <span view="yearView" on-tap="{{viewSelectAction}}" hero hero-id="poo">{{viewingYear}}</span></h4>
@@ -75,7 +77,7 @@ Fired when an item element is tapped.
                 <paper-icon-button icon="chevron-right" on-tap="{{nextAction}}" noink></paper-icon-button>
               </div>
 
-              <div class="weekday" layout horizontal center>
+              <div class="weekday" style="layout horizontal center">
                 <template repeat="{{weekday in weekdays}}">
                   <div class="weekday-name">{{weekday}}</div>
                 </template>

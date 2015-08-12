@@ -291,21 +291,16 @@
         margin: 0;
       }
       paper-button::shadow #ripple {
-        color: {{g.dCalendar.accentColor}};
+        color: '#2196F3';
       }
     </style>
   </template>
 
   <script>
-
-  (function(){
-
     var dCalendar = {
       accentColor: '#2196F3',
       bgColor: '#2c3a40'
     };
-
-    document._currentScript.ownerDocument.getElementById('d-calendar-theme').scaleColor = scaleColor;
 
     function scaleColor(col, amt) {
       var usePound = false;
@@ -325,7 +320,5 @@
       else if (g < 0) g = 0;
       return (usePound?"#":"") + String("000000" + (g | (b << 8) | (r << 16)).toString(16)).slice(-6);
     }
-
-  })()
   </script>
 </dom-module>

@@ -6,9 +6,10 @@
 <dom-module id="d-calendar-years">
   <template>
     <style include="d-calendar-theme"></style>
+
     <d-date-utils id="dateUtils"></d-date-utils>
 
-    <div id="years" layout horizontal wrap>
+    <div id="years" class="layout horizontal wrap">
       <template repeat="{{year, i in yearsArray}}">
         <div class="year" layout horizontal center center-justified hero?="{{i + startYear == viewingYear}}" hero-id="poo">
           <paper-button data-year="{{i + startYear}}" on-tap="{{yearSelected}}" recenteringTouch>{{i + startYear}}</paper-button>
@@ -17,40 +18,36 @@
     </div>
   </template>
 
-</dom-module>
+  <script>
+    Polymer({
+      is: 'd-calendar-years',
 
-<script>
-(function(){
-
-  Polymer({
-    is: 'd-calendar-years',
-
-    properties: {
-      startYear: Number,
-      years: {
-        type: Array,
-        notify: true,
-        observer: 'yearsChanged'
+      properties: {
+        startYear: Number,
+        years: {
+          type: Array,
+          notify: true,
+          observer: 'yearsChanged'
+        },
+        yearsArray: {
+          type: Array,
+          notify: true
+        }
       },
-      yearsArray: {
-        type: Array,
-        notify: true
+
+      ready: function(){
+        var now = this.viewingYear || new Date().getFullYear();
+        this.startYear = this.startYear || now - 2;
+        this.years = this.years || 15;
+      },
+
+      yearsChanged: function() {
+        this.yearsArray = Array(this.years);
+      },
+
+      yearSelected: function(e, detail, sender) {
+        this.fire('d-calendar-year-selected', {year: sender.dataset.year });
       }
-    },
-
-    ready: function(){
-      var now = this.viewingYear || new Date().getFullYear();
-      this.startYear = this.startYear || now - 2;
-      this.years = this.years || 15;
-    },
-
-    yearsChanged: function() {
-      this.yearsArray = Array(this.years);
-    },
-
-    yearSelected: function(e, detail, sender) {
-      this.fire('d-calendar-year-selected', {year: sender.dataset.year });
-    }
-  });
-})();
-</script>
+    });
+  </script>
+</dom-module>

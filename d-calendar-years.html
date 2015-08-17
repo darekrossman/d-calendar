@@ -3,30 +3,38 @@
 <link rel="import" href="d-calendar-theme.html"/>
 <link rel="import" href="d-date-utils.html"/>
 
-<polymer-element name="d-calendar-years" attributes="startYear years viewingYear">
-  <template> 
-    <core-style ref="d-calendar-theme-years"></core-style>
+<dom-module id="d-calendar-years">
+  <template>
+    <style include="d-calendar-theme"></style>
 
     <d-date-utils id="dateUtils"></d-date-utils>
 
-    <div id="years" layout horizontal wrap>
+    <div id="years" class="layout horizontal wrap">
       <template repeat="{{year, i in yearsArray}}">
         <div class="year" layout horizontal center center-justified hero?="{{i + startYear == viewingYear}}" hero-id="poo">
-          <paper-button year="{{i + startYear}}" on-tap="{{yearSelected}}" recenteringTouch>{{i + startYear}}</paper-button>
-        </div>  
+          <paper-button data-year="{{i + startYear}}" on-tap="{{yearSelected}}" recenteringTouch>{{i + startYear}}</paper-button>
+        </div>
       </template>
     </div>
-     
   </template>
- 
-  <script>
-  (function(){
 
+  <script>
     Polymer({
-      startYear: null,
-      years: null,
-      yearsArray: Array(this.years),
-      
+      is: 'd-calendar-years',
+
+      properties: {
+        startYear: Number,
+        years: {
+          type: Array,
+          notify: true,
+          observer: 'yearsChanged'
+        },
+        yearsArray: {
+          type: Array,
+          notify: true
+        }
+      },
+
       ready: function(){
         var now = this.viewingYear || new Date().getFullYear();
         this.startYear = this.startYear || now - 2;
@@ -34,18 +42,12 @@
       },
 
       yearsChanged: function() {
-        this.yearsArray = Array(this.years)
+        this.yearsArray = Array(this.years);
       },
 
       yearSelected: function(e, detail, sender) {
-        this.fire('d-calendar-year-selected', {year: sender.getAttribute('year')})
+        this.fire('d-calendar-year-selected', {year: sender.dataset.year });
       }
-    })
-    
-  })()
+    });
   </script>
-</polymer-element>
-
-
-
-
+</dom-module>

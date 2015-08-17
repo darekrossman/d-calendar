@@ -3,7 +3,7 @@
 <head>
   <meta name="viewport" content="width=device-width, user-scalable=no">
   <title>d-calendar Demo</title>
-  <link rel="import" href="../core-input/core-input.html">
+  <link rel="import" href="../paper-input/paper-input.html">
   <link rel="import" href="../polymer-filters/polymer-filters.html">
   <link rel="import" href="d-calendar.html">
 
@@ -62,8 +62,8 @@
 
     <div layout horizontal center center-justified>
       <d-calendar selectedDate="{{selectedDate}}" date="{{date}}" class="light-theme" on-d-calendar-date-selected="{{dateSelected}}"></d-calendar>
-      <d-calendar selectedDate="{{selectedDate}}" header class="light-theme"></d-calendar>
-      <d-calendar selectedDate="{{selectedDate}}"></d-calendar>
+      <d-calendar selectedDate="{{selectedDate}}" header class="light-theme" language="ru"></d-calendar>
+      <d-calendar selectedDate="{{selectedDate}}" language="eo"></d-calendar>
     </div>
 
     <div id="dateDisplay">

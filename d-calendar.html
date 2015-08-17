@@ -1,10 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../font-roboto/roboto.html"/>
-<link rel="import" href="../core-meta/core-meta.html"/>
-<link rel="import" href="../core-style/core-style.html"/>
-<link rel="import" href="../core-media-query/core-media-query.html"/>
-<link rel="import" href="../core-animated-pages/core-animated-pages.html"/>
-<link rel="import" href="../core-animated-pages/transitions/slide-up.html"/>
+<link rel="import" href="../iron-media-query/iron-media-query.html"/>
+<link rel="import" href="../iron-pages/iron-pages.html"/>
 <link rel="import" href="../paper-icon-button/paper-icon-button.html"/>
 <link rel="import" href="d-calendar-theme.html"/>
 <link rel="import" href="d-calendar-weeks.html"/>
@@ -28,94 +24,92 @@ Example
 <!--
 Fired when an item element is tapped.
 
-@event core-activate
+@event iron-activate
 @param {Object} detail
   @param {Object} detail.item the item element
 -->
 
 
-<polymer-element name="d-calendar" attributes="selectedDate viewingDate date language header" touch-action="auto">
+<dom-module id="d-calendar" touch-action="auto">
+
   <template id="template">
 
-    <core-style ref="d-calendar-theme"></core-style>
+    <style include="d-calendar-theme"></style>
 
-    <core-media-query query="max-height: 360px" queryMatches="{{landscape}}"></core-media-query>
+    <iron-media-query query="max-height: 360px" queryMatches="{{landscape}}"></iron-media-query>
 
     <d-date-utils id="dateUtils"></d-date-utils>
 
     <div id="wrapper" layout horizontal?="{{landscape}}" vertical?="{{!landscape}}">
 
-    <div id="calendar-selection" hidden?="{{ !header }}">
-      <div id="selectedWeekdayHeader" layout horizontal>
-        <div relative flex id="selectedWeekday">
-          <div class="selectedWeekday slideup animate">{{selectedWeekday}}</div>
+      <div id="calendar-selection" hidden?="{{ !header }}">
+        <div id="selectedWeekdayHeader" layout horizontal>
+          <div relative flex id="selectedWeekday">
+            <div class="selectedWeekday slideup animate">{{selectedWeekday}}</div>
+          </div>
+        </div>
+
+        <div id="selectedDateHeader" layout vertical center center-justified>
+          <div id="selectedMonth">
+            <div class="selectedMonth slideup animate" style="text-transform: uppercase">{{selectedMonth}}</div>
+          </div>
+          <div id="selectedDay">
+            <div class="selectedDay slideup animate" view="dateView" on-tap="{{viewSelectAction}}">{{selectedDay}}</div>
+          </div>
+          <div id="selectedYear">
+            <div class="selectedYear slideup animate" view="yearView" on-tap="{{viewSelectAction}}">{{selectedYear}}</div>
+          </div>
         </div>
       </div>
 
-      <div id="selectedDateHeader" layout vertical center center-justified>
-        <div id="selectedMonth">
-          <div class="selectedMonth slideup animate" style="text-transform: uppercase">{{selectedMonth}}</div>
-        </div>
-        <div id="selectedDay">
-          <div class="selectedDay slideup animate" view="dateView" on-tap="{{viewSelectAction}}">{{selectedDay}}</div>
-        </div>
-        <div id="selectedYear">
-          <div class="selectedYear slideup animate" view="yearView" on-tap="{{viewSelectAction}}">{{selectedYear}}</div>
-        </div>
-      </div>
-    </div>
+      <div id="calendar" layout vertical on-trackx="{{trackx}}" on-trackstart="{{trackstart}}" on-trackend="{{trackend}}">
 
-    <div id="calendar" layout vertical on-trackx="{{trackx}}" on-trackstart="{{trackstart}}" on-trackend="{{trackend}}">
-
-      <core-animated-pages id="views" selected="{{selectedView}}" transitions="slide-up hero-transition cross-fade-delayed cross-fade">
-        <section name="dateView">
-
-          <div cross-fade>
-
-            <div id="header" layout horizontal>
-              <paper-icon-button icon="chevron-left" on-tap="{{prevAction}}" noink></paper-icon-button>
-              <div flex relative id="viewingMonthYear">
-                <h4 class="viewingMonthYear slideleft animate">{{viewingMonth}} <span view="yearView" on-tap="{{viewSelectAction}}" hero hero-id="poo">{{viewingYear}}</span></h4>
+        <iron-pages id="views" selected="{{selectedView}}" transitions="slide-up hero-transition cross-fade-delayed cross-fade">
+          <section name="dateView">
+            <div cross-fade>
+              <div id="header" layout horizontal>
+                <paper-icon-button icon="chevron-left" on-tap="{{prevAction}}" noink></paper-icon-button>
+                <div flex relative id="viewingMonthYear">
+                  <h4 class="viewingMonthYear slideleft animate">{{viewingMonth}} <span view="yearView" on-tap="{{viewSelectAction}}" hero hero-id="poo">{{viewingYear}}</span></h4>
+                </div>
+                <paper-icon-button icon="chevron-right" on-tap="{{nextAction}}" noink></paper-icon-button>
               </div>
-              <paper-icon-button icon="chevron-right" on-tap="{{nextAction}}" noink></paper-icon-button>
+
+              <div class="weekday" layout horizontal center>
+                <template repeat="{{weekday in weekdays}}">
+                  <div class="weekday-name">{{weekday}}</div>
+                </template>
+              </div>
+              <d-calendar-weeks
+                date="{{viewingDate}}"
+                selectedDate="{{selectedDate}}"
+                on-d-calendar-date-selected="{{dateSelectAction}}">
+              </d-calendar-weeks>
             </div>
+          </section>
 
-            <div class="weekday" layout horizontal center>
-              <template repeat="{{weekday in weekdays}}">
-                <div class="weekday-name">{{weekday}}</div>
-              </template>
+          <section name="yearView">
+            <div cross-fade>
+              <d-calendar-years
+                on-d-calendar-year-selected="{{yearSelectAction}}"
+                viewingYear="{{viewingYear}}">
+              </d-calendar-years>
             </div>
-            <d-calendar-weeks
-              date="{{viewingDate}}"
-              selectedDate="{{selectedDate}}"
-              on-d-calendar-date-selected="{{dateSelectAction}}">
-            </d-calendar-weeks>
-          </div>
+          </section>
 
-        </section>
-
-        <section name="yearView">
-          <div cross-fade>
-            <d-calendar-years
-              on-d-calendar-year-selected="{{yearSelectAction}}"
-              viewingYear="{{viewingYear}}">
-            </d-calendar-years>
-          </div>
-        </section>
-
-      </core-animated-pages>
+        </iron-pages>
+      </div>
     </div>
-
-
-    </div>
-
   </template>
+</dom-module>
 
-  <script>
-  (function(){
+<script>
+(function(){
 
-    var prototype = {
+  var prototype = {
+    is: 'd-calendar',
 
+    properties: {
       /**
        * The `selectedDate` attribute sets an initial selectedDate
        *
@@ -123,7 +117,10 @@ Fired when an item element is tapped.
        * @type string
        * @default {current date}
        */
-      selectedDate: null,
+      selectedDate: {
+        type: Date,
+        notify: true
+      },
 
       /**
        * The `selectedView` attribute gets/sets the calendar view
@@ -133,7 +130,12 @@ Fired when an item element is tapped.
        * @type string
        * @default 'dateView'
        */
-      selectedView: 'dateView',
+      viewingDate: {
+        type: Date,
+        notify: true
+      },
+
+      date: Date,
 
       /**
        * The `language` attribute sets the language for localized day and month names
@@ -142,7 +144,10 @@ Fired when an item element is tapped.
        * @type string
        * @default 'en'
        */
-      language: 'en',
+      language: {
+        type: String,
+        value: 'en'
+      },
 
       /**
        * The `header` attribute controls visibility of header with selected date
@@ -151,307 +156,412 @@ Fired when an item element is tapped.
        * @type boolean
        * @default {false}
        */
-       header: false,
+      header: {
+        type: Boolean,
+        value: false
+      }
+    },
 
+    locale: {
+      'en': {
+          monthNames: [
+              'January',
+              'February',
+              'March',
+              'April',
+              'May',
+              'June',
+              'July',
+              'August',
+              'September',
+              'October',
+              'November',
+              'December'
+          ],
 
-      locale: {
-        'en': {
-            monthNames: [
-                'January',
-                'February',
-                'March',
-                'April',
-                'May',
-                'June',
-                'July',
-                'August',
-                'September',
-                'October',
-                'November',
-                'December'
-            ],
+          shortMonthNames: [
+              'Jan',
+              'Feb',
+              'Mar',
+              'Apr',
+              'May',
+              'Jun',
+              'Jul',
+              'Aug',
+              'Sep',
+              'Oct',
+              'Nov',
+              'Dec'
+          ],
 
-            shortMonthNames: [
-                'Jan',
-                'Feb',
-                'Mar',
-                'Apr',
-                'May',
-                'Jun',
-                'Jul',
-                'Aug',
-                'Sep',
-                'Oct',
-                'Nov',
-                'Dec'
-            ],
+          dayNames: [
+              'Sunday',
+              'Monday',
+              'Tuesday',
+              'Wednesday',
+              'Thursday',
+              'Friday',
+              'Saturday'
+          ],
 
-            dayNames: [
-                'Sunday',
-                'Monday',
-                'Tuesday',
-                'Wednesday',
-                'Thursday',
-                'Friday',
-                'Saturday'
-            ],
+          shortDayNames: [
+              'S',
+              'M',
+              'T',
+              'W',
+              'T',
+              'F',
+              'S'
+          ],
+      },
+      'eo': {
+          monthNames: [
+              'januaro',
+              'februaro',
+              'marto',
+              'aprilo',
+              'majo',
+              'junio',
+              'julio',
+              'aŭgusto',
+              'septembro',
+              'oktobro',
+              'novembro',
+              'decembro'
+          ],
 
-            shortDayNames: [
-                'S',
-                'M',
-                'T',
-                'W',
-                'T',
-                'F',
-                'S'
-            ],
-        },
-        'es': {
-            monthNames: [
-                'Enero',
-                'Febrero',
-                'Marzo',
-                'Abril',
-                'Mayo',
-                'Junio',
-                'Julio',
-                'Agosto',
-                'Septiembre',
-                'Octubre',
-                'Noviembre',
-                'Diciembre'
-            ],
+          shortMonthNames: [
+              'jan',
+              'feb',
+              'mar',
+              'Apr',
+              'maj',
+              'jun',
+              'jul',
+              'aŭg',
+              'sep',
+              'okt',
+              'nov',
+              'dec'
+          ],
 
-            shortMonthNames: [
-                'Ene',
-                'Feb',
-                'Mar',
-                'Abr',
-                'May',
-                'Jun',
-                'Jul',
-                'Ago',
-                'Sep',
-                'Oct',
-                'Nov',
-                'Dic'
-            ],
+          dayNames: [
+              'dimanĉo',
+              'lundo',
+              'mardo',
+              'merkredo',
+              'jaudo',
+              'vendredo',
+              'sabato'
+          ],
 
-            dayNames: [
-                'Domingo',
-                'Lunes',
-                'Martes',
-                'Miércoles',
-                'Jueves',
-                'Viernes',
-                'Sábado'
-            ],
+          shortDayNames: [
+              'di',
+              'lu',
+              'ma',
+              'me',
+              'ja',
+              've',
+              'sa'
+          ],
+      },
+      'es': {
+          monthNames: [
+              'Enero',
+              'Febrero',
+              'Marzo',
+              'Abril',
+              'Mayo',
+              'Junio',
+              'Julio',
+              'Agosto',
+              'Septiembre',
+              'Octubre',
+              'Noviembre',
+              'Diciembre'
+          ],
 
-            shortDayNames: [
-                'D',
-                'L',
-                'M',
-                'X',
-                'J',
-                'V',
-                'S'
-            ],
-        },
+          shortMonthNames: [
+              'Ene',
+              'Feb',
+              'Mar',
+              'Abr',
+              'May',
+              'Jun',
+              'Jul',
+              'Ago',
+              'Sep',
+              'Oct',
+              'Nov',
+              'Dic'
+          ],
+
+          dayNames: [
+              'Domingo',
+              'Lunes',
+              'Martes',
+              'Miércoles',
+              'Jueves',
+              'Viernes',
+              'Sábado'
+          ],
+
+          shortDayNames: [
+              'D',
+              'L',
+              'M',
+              'X',
+              'J',
+              'V',
+              'S'
+          ],
       },
 
-      getFullMonth: function(d) {
-        return this.locale[this.language].monthNames[d.getMonth()];
+      'ru': {
+          monthNames: [
+              'Январь',
+              'Февраль',
+              'Март',
+              'Апрель',
+              'Май',
+              'Июнь',
+              'Июль',
+              'Август',
+              'Сентябрь',
+              'Октябрь',
+              'Ноябрь',
+              'Декабрь'
+          ],
+
+          shortMonthNames: [
+              'Янв',
+              'Фев',
+              'Мар',
+              'Апр',
+              'Май',
+              'Июн',
+              'Июл',
+              'Авг',
+              'Сен',
+              'Окт',
+              'Ноя',
+              'Дек'
+          ],
+
+          dayNames: [
+              'Воскресенье',
+              'Понедельник',
+              'Вторник',
+              'Среда',
+              'Четверг',
+              'Пятница',
+              'Суббота'
+          ],
+
+          shortDayNames: [
+              'Вс',
+              'Пн',
+              'Вт',
+              'Ср',
+              'Чт',
+              'Пт',
+              'Сб'
+          ],
       },
+    },
 
-      getShortMonth: function(d) {
-        return this.locale[this.language].shortMonthNames[d.getMonth()];
-      },
+    getFullMonth: function(d) {
+      return this.locale[this.language].monthNames[d.getMonth()];
+    },
 
-      getDayOfWeek: function(d) {
-        return this.locale[this.language].dayNames[d.getDay()];
-      },
+    getShortMonth: function(d) {
+      return this.locale[this.language].shortMonthNames[d.getMonth()];
+    },
 
-      getShortDayNames: function() {
-        return this.locale[this.language].shortDayNames;
-      },
+    getDayOfWeek: function(d) {
+      return this.locale[this.language].dayNames[d.getDay()];
+    },
 
-      ready: function() {
+    getShortDayNames: function() {
+      return this.locale[this.language].shortDayNames;
+    },
 
-        this.dateUtils = this.$.dateUtils;
+    ready: function() {
 
-        if (!this.selectedDate)
-          this.selectedDate = new Date();
-        else
-          this.selectedDate = new Date(this.selectedDate);
+      this.dateUtils = this.$.dateUtils;
 
-        this.weekdays = this.getShortDayNames();
-        this.viewingDate = this.viewingDate || new Date(this.selectedDate);
-        this.viewingDate.setDate(1);
-        this.nowDate = new Date();
+      if (!this.selectedDate) {
+        this.selectedDate = new Date();
+      } else {
+        this.selectedDate = new Date(this.selectedDate);
+      }
 
-        this.addEventListener('keyup', this.keyup.bind(this));
-      },
+      this.weekdays = this.getShortDayNames();
+      this.viewingDate = this.viewingDate || new Date(this.selectedDate);
+      this.viewingDate.setDate(1);
+      this.nowDate = new Date();
 
-      selectedDateChanged: function(olddate, newdate) {
+      this.addEventListener('keyup', this.keyup.bind(this));
+    },
 
-        if (olddate && !olddate.getTime) olddate = new Date(olddate);
+    selectedDateChanged: function(olddate, newdate) {
 
-        if (newdate && !newdate.getTime) {
-          newdate = new Date(newdate);
-          if (!newdate.getTime) return;
-          this.selectedDate = newdate;
-        }
+      if (olddate && !olddate.getTime) olddate = new Date(olddate);
 
-        this.reverseAnimation = olddate && olddate.getTime() > newdate.getTime();
-        this.async(this.updateSelectedDateProps);
-        this.date = this.selectedDate;
+      if (newdate && !newdate.getTime) {
+        newdate = new Date(newdate);
+        if (!newdate.getTime) return;
+        this.selectedDate = newdate;
+      }
 
-        this.focus();
-        this.fire('d-calendar-date-selected', {date: this.selectedDate})
-      },
+      this.reverseAnimation = olddate && olddate.getTime() > newdate.getTime();
+      this.async(this.updateSelectedDateProps);
+      this.date = this.selectedDate;
 
-      viewingDateChanged: function(olddate, newdate) {
-        this.reverseAnimation = olddate && olddate.getTime() > newdate.getTime();
-        this.async(this.updateViewingDateProps)
-      },
+      this.focus();
+      this.fire('d-calendar-date-selected', {date: this.selectedDate})
+    },
 
-      dateChanged: function(olddate, newdate) {
+    viewingDateChanged: function(olddate, newdate) {
+      this.reverseAnimation = olddate && olddate.getTime() > newdate.getTime();
+      this.async(this.updateViewingDateProps)
+    },
 
-      },
+    dateChanged: function(olddate, newdate) {
 
-      /**
-       * The `updateSelectedDateProps` is none of your business.
-       *
-       * @method updateSelectedDateProps
-       * @param {String} greeting Pass in a specific greeting.
-       * @return {String} Returns a string greeting.
-       */
-      updateSelectedDateProps: function() {
-        this.selectedWeekday = this.getDayOfWeek(this.selectedDate);
-        this.selectedMonth = this.getShortMonth(this.selectedDate);
-        this.selectedDay = this.selectedDate.getDate();
-        this.selectedYear = this.selectedDate.getFullYear();
-      },
+    },
 
-      updateViewingDateProps: function() {
-        this.viewingMonth = this.getFullMonth(this.viewingDate);
-        this.viewingYear = this.viewingDate.getFullYear();
-        this.viewingMonthYear = this.viewingMonth + ' ' + this.viewingYear;
-      },
+    /**
+     * The `updateSelectedDateProps` is none of your business.
+     *
+     * @method updateSelectedDateProps
+     * @param {String} greeting Pass in a specific greeting.
+     * @return {String} Returns a string greeting.
+     */
+    updateSelectedDateProps: function() {
+      this.selectedWeekday = this.getDayOfWeek(this.selectedDate);
+      this.selectedMonth = this.getShortMonth(this.selectedDate);
+      this.selectedDay = this.selectedDate.getDate();
+      this.selectedYear = this.selectedDate.getFullYear();
+    },
 
-      nextAction: function() {
-        this.viewingDate = this.dateUtils.addMonths(this.viewingDate, 1);
-      },
+    updateViewingDateProps: function() {
+      this.viewingMonth = this.getFullMonth(this.viewingDate);
+      this.viewingYear = this.viewingDate.getFullYear();
+      this.viewingMonthYear = this.viewingMonth + ' ' + this.viewingYear;
+    },
 
-      prevAction: function() {
-        this.viewingDate = this.dateUtils.addMonths(this.viewingDate, -1);
-      },
+    nextAction: function() {
+      this.viewingDate = this.dateUtils.addMonths(this.viewingDate, 1);
+    },
 
-      viewSelectAction: function(ev, detail, sender) {
-        this.selectedView = (sender.getAttribute('view'));
-      },
+    prevAction: function() {
+      this.viewingDate = this.dateUtils.addMonths(this.viewingDate, -1);
+    },
 
-      dateSelectAction: function(ev, detail, sender) {
-        this.selectedDate = new Date(ev.detail.date);
-      },
+    viewSelectAction: function(ev, detail, sender) {
+      this.selectedView = (sender.getAttribute('view'));
+    },
 
-      yearSelectAction: function(ev, detail, sender) {
-        var year = ev.detail.year;
+    dateSelectAction: function(ev, detail, sender) {
+      this.selectedDate = new Date(ev.detail.date);
+    },
 
-        this.disablePropertyAnimations = true;
-        this.viewingDate = new Date(year, this.viewingDate.getMonth(), 1);
-        this.async(function(){
-          this.$.views.selected = 'dateView';
-          this.disablePropertyAnimations = false;
-        }, null, 280);
-      },
+    yearSelectAction: function(ev, detail, sender) {
+      var year = ev.detail.year;
 
-      renderNode: function(element) {
-        if (this.disablePropertyAnimations) return;
-        var self = this;
-        var delayRemovalTime = 400;
-        var el = element;
-        var elClone = el.cloneNode(true);
+      this.disablePropertyAnimations = true;
+      this.viewingDate = new Date(year, this.viewingDate.getMonth(), 1);
+      this.async(function(){
+        this.$.views.selected = 'dateView';
+        this.disablePropertyAnimations = false;
+      }, null, 280);
+    },
 
-        el._originalTransition = element.style.transition;
-        el.style.transition = 'none';
-        el.parentElement.appendChild(elClone);
+    renderNode: function(element) {
+      if (this.disablePropertyAnimations) return;
+      var self = this;
+      var delayRemovalTime = 400;
+      var el = element;
+      var elClone = el.cloneNode(true);
 
+      el._originalTransition = element.style.transition;
+      el.style.transition = 'none';
+      el.parentElement.appendChild(elClone);
+
+      if (!this.reverseAnimation) {
+        el.classList.remove('in') // back to start position immediately
+      } else {
+        el.classList.add('out') // go to end position immediately
+      }
+
+      this.async(function(){
+        el.style.transition = el._originalTransition;
         if (!this.reverseAnimation) {
-          el.classList.remove('in') // back to start position immediately
+          elClone.classList.add('out'); // animate to end position
         } else {
-          el.classList.add('out') // go to end position immediately
+          elClone.classList.remove('in'); // animate to start position
+          el.classList.remove('out'); // animate to start position
         }
+        el.classList.add('in');
+      });
 
-        this.async(function(){
-          el.style.transition = el._originalTransition;
-          if (!this.reverseAnimation) {
-            elClone.classList.add('out'); // animate to end position
-          } else {
-            elClone.classList.remove('in'); // animate to start position
-            el.classList.remove('out'); // animate to start position
-          }
-          el.classList.add('in');
-        });
-
-        this.async(function(){
-          try {
-            el.parentNode.removeChild(elClone);
-          } catch (err) {
-          }
-        }, null, delayRemovalTime);
-      },
-
-      keyup: function(e){
-        var month = this.selectedDate.getMonth();
-        switch (e.keyCode) {
-          case 37:
-            this.prevAction()
-            break;
-          case 39:
-            this.nextAction()
-            break;
+      this.async(function(){
+        try {
+          el.parentNode.removeChild(elClone);
+        } catch (err) {
         }
-      },
-      isXSwipe: function(start, end) {
-        var totalTouchTime = end.timeStamp - start.timeStamp;
-        var dx = end.dx;
-        return totalTouchTime < 500 && Math.abs(dx) > 40
-      },
-      trackx: function(e) {
+      }, null, delayRemovalTime);
+    },
 
-      },
-      trackstart: function(e) {
-        this.trackStartEvent = e;
-      },
-      trackend: function(e) {
-        if (this.isXSwipe(this.trackStartEvent, e)) {
-          e.dx < 0 ? this.nextAction() : this.prevAction();
-        }
+    keyup: function(e){
+      var month = this.selectedDate.getMonth();
+      switch (e.keyCode) {
+        case 37:
+          this.prevAction()
+          break;
+        case 39:
+          this.nextAction()
+          break;
       }
+    },
+    isXSwipe: function(start, end) {
+      var totalTouchTime = end.timeStamp - start.timeStamp;
+      var dx = end.dx;
+      return totalTouchTime < 500 && Math.abs(dx) > 40
+    },
+    trackx: function(e) {
 
-    };
-
-    // Set up the values we want to watch and assign the change callback,
-    // so that we can animate the nodes bound to them.
-    var fields = [
-      'selectedWeekday',
-      'selectedDay',
-      'selectedMonth',
-      'selectedYear',
-      'viewingMonthYear'
-    ]
-    fields.forEach(function(field){
-      prototype[field + 'Changed'] = function(oldval, newval) {
-        var el = this.shadowRoot.querySelector('.' + field);
-
-
-        if (el) this.renderNode(el);
+    },
+    trackstart: function(e) {
+      this.trackStartEvent = e;
+    },
+    trackend: function(e) {
+      if (this.isXSwipe(this.trackStartEvent, e)) {
+        e.dx < 0 ? this.nextAction() : this.prevAction();
       }
-    })
+    }
 
-    Polymer('d-calendar', prototype);
+  };
 
-  })()
-  </script>
-</polymer-element>
+  // Set up the values we want to watch and assign the change callback,
+  // so that we can animate the nodes bound to them.
+  var fields = [
+    'selectedWeekday',
+    'selectedDay',
+    'selectedMonth',
+    'selectedYear',
+    'viewingMonthYear'
+  ]
+
+  fields.forEach(function(field){
+    prototype[field + 'Changed'] = function(oldval, newval) {
+      var el = this.shadowRoot.querySelector('.' + field);
+      if (el) this.renderNode(el);
+    }
+  })
+
+  Polymer(prototype);
+
+})()
+</script>
